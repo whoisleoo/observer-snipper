@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain } from "electron";
+import { registerIpcHandlers } from "./ipc";
 import path from "node:path";
 
 function createWindow() {
@@ -47,7 +48,10 @@ ipcMain.handle("window:is-maximized", (event) => {
     return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false;
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+    createWindow();
+    registerIpcHandlers();
+});
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
