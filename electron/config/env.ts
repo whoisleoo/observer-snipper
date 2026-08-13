@@ -11,9 +11,6 @@ export const appConfigSchema = z.object({
         maxRequests: z.coerce.number().default(100),
         windowMs: z.coerce.number().default(60000),
     }),
-    auth: z.object({
-        clientId: z.string(),
-    }),
     databasePath: z.string().default('./database.sqlite'),
 })
 
@@ -31,9 +28,6 @@ export function loadConfig(): AppConfig {
         rateLimit: {
             maxRequests: process.env.RATE_LIMIT_MAX_REQUESTS,
             windowMs: process.env.RATE_LIMIT_WINDOW_MS,
-        },
-        auth: {
-            clientId: process.env.MSA_CLIENT_ID,
         },
         databasePath: process.env.DATABASE_PATH,
     };
