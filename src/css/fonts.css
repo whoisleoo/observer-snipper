@@ -1,0 +1,289 @@
+@font-face {
+    font-family: 'Hooskai';
+    src: url('/fonts/hooskaichamferedsquare.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'ClashDisplay';
+    src: url('/fonts/ClashDisplay/ClashDisplay-Extralight.otf') format('opentype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'ClashDisplay';
+    src: url('/fonts/ClashDisplay/ClashDisplay-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'ClashDisplay';
+    src: url('/fonts/ClashDisplay/ClashDisplay-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'ClashDisplay';
+    src: url('/fonts/ClashDisplay/ClashDisplay-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'ClashDisplay';
+    src: url('/fonts/ClashDisplay/ClashDisplay-Semibold.otf') format('opentype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'ClashDisplay';
+    src: url('/fonts/ClashDisplay/ClashDisplay-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'AntiDesignEndeavour';
+    src: url('/fonts/Anti Design Endeavour Demo/Anti Design Endeavour - Demo.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'PierSans';
+    src: url('/fonts/PierSans-FreeForPersonalUse/PierSans-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'PierSans';
+    src: url('/fonts/PierSans-FreeForPersonalUse/PierSans-LightItalic.otf') format('opentype');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'PierSans';
+    src: url('/fonts/PierSans-FreeForPersonalUse/PierSans-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'PierSans';
+    src: url('/fonts/PierSans-FreeForPersonalUse/PierSans-Italic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'PierSans';
+    src: url('/fonts/PierSans-FreeForPersonalUse/PierSans-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'PierSans';
+    src: url('/fonts/PierSans-FreeForPersonalUse/PierSans-MediumItalic.otf') format('opentype');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'PierSans';
+    src: url('/fonts/PierSans-FreeForPersonalUse/PierSans-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'PierSans';
+    src: url('/fonts/PierSans-FreeForPersonalUse/PierSans-BoldItalic.otf') format('opentype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'PierSans';
+    src: url('/fonts/PierSans-FreeForPersonalUse/PierSans-Black.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'PierSans';
+    src: url('/fonts/PierSans-FreeForPersonalUse/PierSans-BlackItalic.otf') format('opentype');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'ArchivoBlack';
+    src: url('/fonts/ArchivoBlack/[PRINCIPAL] ArchivoBlack.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'ArchivoBlack';
+    src: url('/fonts/ArchivoBlack/[PRINCIPAL] ArchivoBlack Expanded.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-stretch: expanded;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'Archivo';
+    src: url('/fonts/ArchivoBlack/[SECUNDARIA] Archivo Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'Archivo';
+    src: url('/fonts/ArchivoBlack/[SECUNDARIA] Archivo Expanded Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: expanded;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'InstrumentSerif';
+    src: url('/fonts/InstrumentSerif/InstrumentSerif-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'InstrumentSerif';
+    src: url('/fonts/InstrumentSerif/InstrumentSerif-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'NeueMachina';
+    src: url('/fonts/NeueMachina/PPNeueMachina-InktrapRegular.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'NeueMachina';
+    src: url('/fonts/NeueMachina/PPNeueMachina-PlainRegularItalic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'NeueMachinaInktrap';
+    src: url('/fonts/NeueMachina/PPNeueMachina-InktrapLightItalic.otf') format('opentype');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'NeueMachinaInktrap';
+    src: url('/fonts/NeueMachina/PPNeueMachina-InktrapRegularItalic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'NeueMachinaInktrap';
+    src: url('/fonts/NeueMachina/PPNeueMachina-InktrapUltraboldItalic.otf') format('opentype');
+    font-weight: 800;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'SpaceMono';
+    src: url('/fonts/SpaceMono/[RESERVA] SpaceMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'SpaceMono';
+    src: url('/fonts/SpaceMono/[RESERVA] SpaceMono-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'SpaceMono';
+    src: url('/fonts/SpaceMono/[RESERVA] SpaceMono-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'SpaceMono';
+    src: url('/fonts/SpaceMono/[RESERVA] SpaceMono-BoldItalic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'MonumentExtended';
+    src: url('/fonts/MonumentExtended/MonumentExtended-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'MonumentExtended';
+    src: url('/fonts/MonumentExtended/MonumentExtended-Ultrabold.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'BasementGrotesque';
+    src: url('/fonts/BasementGrotesque/BasementGrotesque-Black_v1.202.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+  }
