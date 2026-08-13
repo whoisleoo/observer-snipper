@@ -1,4 +1,4 @@
-import type { SearchHistoryRepository } from "../database/repositories/searchHistoryRepository";
+import type { CandidateRepository } from "../database/repositories/candidateRepository";
 import type { Nick } from "../models/Nick";
 import type { MojangService } from "../services/mojangService";
 
@@ -8,7 +8,7 @@ export interface NickController {
 
 export function createNickController(
     mojangService: MojangService,
-    searchHistoryRepository: SearchHistoryRepository,
+    candidateRepository: CandidateRepository,
 ): NickController {
-    throw new Error("TODO: orchestrate mojangService.checkAvailability + persist via searchHistoryRepository");
+    throw new Error("TODO: orchestrate mojangService.checkAvailability + persist via candidateRepository");
 }

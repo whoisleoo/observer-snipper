@@ -8,8 +8,14 @@ export const appConfigSchema = z.object({
         availableUrl: z.string().url(),
     }),
     rateLimit: z.object({
-        maxRequests: z.coerce.number().default(100),
-        windowMs: z.coerce.number().default(60000),
+        bulk: z.object({
+            maxRequests: z.coerce.number().default(150),
+            windowMs: z.coerce.number().default(120000),
+        }),
+        verify: z.object({
+            maxRequests: z.coerce.number().default(18),
+            windowMs: z.coerce.number().default(300000),
+        }),
     }),
     databasePath: z.string().default('./database.sqlite'),
 })
@@ -26,8 +32,14 @@ export function loadConfig(): AppConfig {
             availableUrl: process.env.MOJANG_AVAILABLE_URL,
         },
         rateLimit: {
-            maxRequests: process.env.RATE_LIMIT_MAX_REQUESTS,
-            windowMs: process.env.RATE_LIMIT_WINDOW_MS,
+            bulk: {
+                maxRequests: process.env.RATE_LIMIT_BULK_MAX_REQUESTS,
+                windowMs: process.env.RATE_LIMIT_BULK_WINDOW_MS,
+            },
+            verify: {
+                maxRequests: process.env.RATE_LIMIT_VERIFY_MAX_REQUESTS,
+                windowMs: process.env.RATE_LIMIT_VERIFY_WINDOW_MS,
+            },
         },
         databasePath: process.env.DATABASE_PATH,
     };

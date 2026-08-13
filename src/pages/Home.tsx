@@ -22,7 +22,7 @@ function Home() {
               Observer
             </Heading>
             <Text as="p" font="body" size="base" color="muted" animate={false} className="text-center">
-              Real-time Minecraft username availability tracking.
+              An open-source Minecraft username availability tracking tool.
             </Text>
           </div>
 
@@ -59,7 +59,7 @@ function Home() {
 
       <footer className="border-t border-white/10 px-6 py-3 text-center">
         <p className="font-label text-2xs text-white/40">
-          Developed by{' '}
+          Developed with <p className='text-red-500 inline animate-pulse'>❤️</p> by{' '}
           <a
             href="https://github.com/whoisleoo"
             className="text-white/60 underline decoration-white/20 underline-offset-2 transition-colors hover:text-white"
