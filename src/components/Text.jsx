@@ -1,8 +1,5 @@
-import { useRef, useEffect } from 'react'
-import { motion, useInView } from 'motion/react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { SplitText } from 'gsap/SplitText'
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 
 const FONTS = {
   display:  'font-display',
@@ -56,90 +53,17 @@ const fadeTransition = {
   ease: [0.25, 0, 0.35, 1],
 }
 
-function useCharReveal(ref, { colorInitial, colorAccent, colorFinal, enabled }) {
-  useEffect(() => {
-    if (!enabled || !ref.current) return
-
-    const el       = ref.current
-    const timers   = new Map()
-    const completed = new Set()
-    const lastProg  = { current: 0 }
-
-    const wordSplit = SplitText.create(el, { type: 'words', wordsClass: 'word' })
-    const charSplit = SplitText.create(wordSplit.words, { type: 'chars', charsClass: 'char' })
-    const allChars  = charSplit.chars
-
-    gsap.set(allChars, { color: colorInitial })
-
-    const trigger = ScrollTrigger.create({
-      trigger: el,
-      start:   'top 90%',
-      end:     'top 10%',
-      scrub:   1,
-      onUpdate(self) {
-        const progress    = self.progress
-        const goingDown   = progress >= lastProg.current
-        const currentIdx  = Math.floor(progress * allChars.length)
-
-        allChars.forEach((char, i) => {
-          if (!goingDown && i >= currentIdx) {
-            if (timers.has(i)) {
-              clearTimeout(timers.get(i))
-              timers.delete(i)
-            }
-            completed.delete(i)
-            gsap.set(char, { color: colorInitial })
-            return
-          }
-
-          if (completed.has(i)) return
-
-          if (i <= currentIdx) {
-            gsap.set(char, { color: colorAccent })
-            if (!timers.has(i)) {
-              const t = setTimeout(() => {
-                timers.delete(i)
-                if (!completed.has(i)) {
-                  completed.add(i)
-                  gsap.set(char, { color: colorFinal })
-                }
-              }, 100)
-              timers.set(i, t)
-            }
-          } else {
-            gsap.set(char, { color: colorInitial })
-          }
-        })
-
-        lastProg.current = progress
-      },
-    })
-
-    return () => {
-      trigger.kill()
-      timers.forEach(t => clearTimeout(t))
-      timers.clear()
-      completed.clear()
-      charSplit.revert()
-      wordSplit.revert()
-    }
-  }, [colorInitial, colorAccent, colorFinal, enabled])
-}
-
 export default function Text({
-  as            = 'p',
-  font          = 'body',
-  size          = 'base',
-  weight        = 'regular',
-  color         = 'default',
-  animate       = true,
-  colorInitial  = 'rgba(255,255,255,0.2)',
-  colorAccent   = 'var(--color-accent)',
-  colorFinal    = 'var(--color-white)',
-  className     = '',
+  as        = 'p',
+  font      = 'body',
+  size      = 'base',
+  weight    = 'regular',
+  color     = 'default',
+  animate   = true,
+  className = '',
   children,
 }) {
-  const animationType = animate === false ? 'none' : animate === true ? 'fade' : animate
+  const animationType = animate === false ? 'none' : 'fade'
 
   const Tag         = as
   const MotionTag   = motion[as] ?? motion.p
@@ -155,19 +79,8 @@ export default function Text({
   const ref      = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-80px 0px' })
 
-  useCharReveal(ref, {
-    colorInitial,
-    colorAccent,
-    colorFinal,
-    enabled: animationType === 'char-reveal',
-  })
-
   if (animationType === 'none') {
     return <Tag className={textClass}>{children}</Tag>
-  }
-
-  if (animationType === 'char-reveal') {
-    return <Tag ref={ref} className={textClass}>{children}</Tag>
   }
 
   return (

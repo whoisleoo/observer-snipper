@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import { registerIpcHandlers } from "./ipc";
 import path from "node:path";
 
@@ -18,6 +18,20 @@ function createWindow() {
 
     win.on("maximize", () => win.webContents.send("window:maximized-changed", true));
     win.on("unmaximize", () => win.webContents.send("window:maximized-changed", false));
+
+    // Links (ex: rodapé) devem abrir no navegador padrão, não navegar
+    // a própria janela do app pra fora.
+    win.webContents.on("will-navigate", (event, url) => {
+        if (url !== win.webContents.getURL()) {
+            event.preventDefault();
+            shell.openExternal(url);
+        }
+    });
+
+    win.webContents.setWindowOpenHandler(({ url }) => {
+        shell.openExternal(url);
+        return { action: "deny" };
+    });
 
     if (!app.isPackaged) {
         win.loadURL(process.env.ELECTRON_RENDERER_URL ?? "http://localhost:5173");

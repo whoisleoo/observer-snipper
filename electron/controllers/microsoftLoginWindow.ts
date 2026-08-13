@@ -1,7 +1,5 @@
 import { BrowserWindow } from "electron";
-import { createAuthService, REDIRECT_URI } from "../services/authService";
-import { loadConfig } from "../config/env";
-import { set } from "zod";
+import path from "node:path";
 
 export function openMicrosoftLoginWindow(authorizationUrl: string, redirectUri: string): Promise<string>{
     return new Promise((resolve, reject) => {
@@ -10,6 +8,7 @@ export function openMicrosoftLoginWindow(authorizationUrl: string, redirectUri: 
             height: 650,
             show: true,
             autoHideMenuBar: true,
+            icon: path.join(__dirname, "../../public/favicon.png"),
             webPreferences: {
                 nodeIntegration: false,
                 contextIsolation: true,

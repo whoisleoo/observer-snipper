@@ -1,6 +1,10 @@
 import { contextBridge, ipcRenderer } from "electron";
+import type { MinecraftAuthToken } from "./types/auth";
 
 contextBridge.exposeInMainWorld("electron", {
+    auth: {
+        loginWithMicrosoft: () => ipcRenderer.invoke("auth:login-microsoft") as Promise<MinecraftAuthToken>,
+    },
     window: {
         minimize: () => ipcRenderer.send("window:minimize"),
         toggleMaximize: () => ipcRenderer.send("window:toggle-maximize"),

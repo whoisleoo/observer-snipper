@@ -41,7 +41,9 @@ async function authenticateXboxLive(microsoftAccessToken: string): Promise<XboxA
         Properties: {
             AuthMethod: 'RPS',
             SiteName: 'user.auth.xboxlive.com',
-            RpsTicket: `d=${microsoftAccessToken}`,
+            // "t=" é o prefixo do client Xbox Network padrão (nosso client_id
+            // vanilla). "d=" só se aplica a apps registrados no Azure.
+            RpsTicket: `t=${microsoftAccessToken}`,
         },
         RelyingParty: 'http://auth.xboxlive.com',
         TokenType: 'JWT',

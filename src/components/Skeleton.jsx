@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { motion } from 'framer-motion'
 
 const LINE_WIDTHS = ['75%', '92%', '58%', '83%', '47%', '68%']
 

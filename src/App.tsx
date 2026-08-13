@@ -3,10 +3,10 @@ import Home from './pages/Home'
 
 function App() {
   return (
-    <>
+    <div className="flex h-screen flex-col">
       <TitleBar />
       <Home />
-    </>
+    </div>
   )
 }
 
