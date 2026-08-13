@@ -154,6 +154,9 @@
   .font-monument { font-family: var(--font-monument); }
   .font-basement { font-family: var(--font-basement); }
   .font-hooskai  { font-family: var(--font-hooskai);  }
+
+  .app-drag    { -webkit-app-region: drag;    }
+  .app-no-drag { -webkit-app-region: no-drag; }
 }
 
 *,
@@ -161,12 +164,6 @@
 *:focus {
   box-sizing: border-box;
   outline: none;
-}
-
-@media (pointer: fine) {
-  *, *:active, *:focus {
-    cursor: none;
-  }
 }
 
 html {
@@ -180,6 +177,7 @@ html {
 
 body {
   font-family: var(--font-body);
+  color: var(--color-white);
 }
 
 html {
