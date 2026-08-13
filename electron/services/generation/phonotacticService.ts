@@ -1,3 +1,5 @@
+import { randomChoice, shuffled } from "./rngUtils";
+
 const VOWELS = "aeiou";
 const VOWELS_SOFT = VOWELS + "y";
 
@@ -134,19 +136,6 @@ function legalVowelRuns(length: number): string[] {
     if (length === 2) return [...VOWEL_RUNS_2];
     if (length === 3) return [...VOWEL_RUNS_3];
     return [];
-}
-
-function randomChoice<T>(items: T[], rng: () => number): T {
-    return items[Math.floor(rng() * items.length)];
-}
-
-function shuffled<T>(items: T[], rng: () => number): T[] {
-    const out = [...items];
-    for (let i = out.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
-        [out[i], out[j]] = [out[j], out[i]];
-    }
-    return out;
 }
 
 function tryBuild(length: number, rng: () => number): string | null {

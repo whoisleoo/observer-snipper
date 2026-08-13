@@ -1,6 +1,5 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-import axios from "axios";
+import { downloadAndCache } from "./httpCache";
+import { stripAccents } from "./textUtils";
 
 export type WordlistLang = "en" | "pt";
 
@@ -12,28 +11,6 @@ const PT_ICF_URL = "https://raw.githubusercontent.com/fserb/pt-br/master/icf";
 const PT_MAX_ICF_SCORE = 16;
 
 const NAME_CHARS = /^[a-z0-9_]+$/;
-
-function stripAccents(raw: string): string {
-    return raw.normalize("NFKD").replace(/\p{Diacritic}/gu, "");
-}
-
-async function readCached(cacheDir: string, filename: string): Promise<string | null> {
-    try {
-        return await fs.readFile(path.join(cacheDir, filename), "utf-8");
-    } catch {
-        return null;
-    }
-}
-
-async function downloadAndCache(url: string, cacheDir: string, filename: string): Promise<string> {
-    const cached = await readCached(cacheDir, filename);
-    if (cached !== null) return cached;
-
-    const { data } = await axios.get<string>(url, { responseType: "text" });
-    await fs.mkdir(cacheDir, { recursive: true });
-    await fs.writeFile(path.join(cacheDir, filename), data, "utf-8");
-    return data;
-}
 
 async function rawEnglishWords(cacheDir: string): Promise<string[]> {
     const raw = await downloadAndCache(EN_WORDS_URL, cacheDir, "words_en.txt");
@@ -63,7 +40,10 @@ async function rawWords(lang: WordlistLang, cacheDir: string): Promise<string[]>
 }
 
 export interface WordlistService {
+    /** Palavras reais do idioma, ja normalizadas e filtradas pelos comprimentos pedidos. */
     loadWords(lang: WordlistLang, lengths: number[]): Promise<string[]>;
+
+    /** Corpus amplo (3..12 letras) pra treinar o markov — independe do comprimento alvo. */
     loadCorpus(langs: WordlistLang[]): Promise<string[]>;
 }
 
