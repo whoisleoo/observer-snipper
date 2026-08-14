@@ -2,6 +2,7 @@ import { ipcMain } from "electron";
 import { createAuthService, REDIRECT_URI } from "../services/authService";
 import { openMicrosoftLoginWindow } from "../controllers/microsoftLoginWindow";
 import { createTokenStore } from "../store/tokenStore";
+import { getMinecraftProfile } from "../services/minecraftService";
 
 export function registerIpcHandlers() {
     const authService = createAuthService();
@@ -18,6 +19,12 @@ export function registerIpcHandlers() {
             microsoftRefreshToken: microsoftToken.refresh_token,
         });
 
-        return minecraftToken;
+        const profile = await getMinecraftProfile(minecraftToken.access_token);
+
+        return { username: profile.name };
+    })
+
+    ipcMain.handle('auth:logout', () => {
+        tokenStore.clear();
     })
 }

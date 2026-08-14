@@ -1,16 +1,15 @@
 export {}
 
 declare global {
-  interface MinecraftAuthToken {
-    access_token: string
-    token_type: string
-    expires_in: number
+  interface LoginResult {
+    username: string
   }
 
   interface Window {
     electron: {
       auth: {
-        loginWithMicrosoft: () => Promise<MinecraftAuthToken>
+        loginWithMicrosoft: () => Promise<LoginResult>
+        logout: () => Promise<void>
       }
       window: {
         minimize: () => void
