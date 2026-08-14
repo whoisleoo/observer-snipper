@@ -10,8 +10,9 @@
     "preview": "electron-vite preview",
     "icon:generate": "electron scripts/generate-icon.mjs",
     "pack:app": "npm run build && electron-builder --config electron-builder.app.yml",
+    "zip:payload": "powershell -NoProfile -Command \"Compress-Archive -Path 'dist/app/win-unpacked/*' -DestinationPath 'dist/app/payload.zip' -Force\"",
     "dist:installer": "electron-builder --config electron-builder.installer.yml",
-    "installer:build": "npm run pack:app && npm run dist:installer"
+    "installer:build": "npm run pack:app && npm run zip:payload && npm run dist:installer"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.20",

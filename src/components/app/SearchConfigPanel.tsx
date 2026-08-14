@@ -41,8 +41,8 @@ function InfoTip({ text }: { text: string }) {
 function FieldLabel({ icon, children, tip }: { icon?: ReactNode; children: ReactNode; tip?: string }) {
   return (
     <div className="flex items-center gap-1.5">
-      {icon && <span className="text-white/40">{icon}</span>}
-      <span className="font-label text-xs uppercase tracking-widest text-white/40">{children}</span>
+      {icon && <span className="text-white/60">{icon}</span>}
+      <span className="font-label text-xs uppercase tracking-widest text-white/60">{children}</span>
       {tip && <InfoTip text={tip} />}
     </div>
   )
@@ -65,7 +65,7 @@ function SourceCard({
   children?: ReactNode
 }) {
   return (
-    <div className="border border-white/10 p-3">
+    <div className="border border-white/60 p-3">
       <div className="flex items-center justify-between">
         <FieldLabel icon={icon} tip={tip}>
           {label}
@@ -220,7 +220,7 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
   }, [length, wordEn, wordPt, previewResult, badwordsMode, clean, pronounceable])
 
   return (
-    <aside className="w-72 shrink-0 overflow-y-auto border-r border-white/10 px-6 py-6">
+    <aside className="w-72 shrink-0 overflow-y-auto border-r border-white/50 px-6 py-6">
       <Heading as="h2" font="heading" size="lg" weight="medium" animate={false} className="text-white">
         Search
       </Heading>
@@ -249,13 +249,13 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
         <AccordionItem
           value="sources"
           trigger={
-            <span className="inline-flex items-center gap-2 font-label text-sm uppercase tracking-widest">
+            <span className="inline-flex items-center gap-2 font-label text-sm uppercase tracking-widest text-white/60">
               <Wand2 size={14} />
               Generation sources
             </span>
           }
         >
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 ">
             <SourceCard
               icon={<Sparkles size={13} />}
               label="Markov"
@@ -293,7 +293,7 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
               <NumberInput label="Max variants per word" value={leetMax} onChange={setLeetMax} min={1} max={20} />
             </SourceCard>
 
-            <div className="border border-white/10 p-3">
+            <div className="border border-white/50 p-3">
               <FieldLabel
                 icon={<LayoutGrid size={13} />}
                 tip="Fixed shape template: c=consonant, v=vowel, l=letter, d=digit, x=any. One name per matching combination. Comma-separate multiple patterns."
@@ -341,12 +341,12 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
               onValueChange={(v: string) => setBadwordsMode(v as 'smart' | 'strict' | 'off')}
             />
 
-            <div className="flex items-center justify-between border border-white/10 p-3">
+            <div className="flex items-center justify-between border border-white/50 p-3">
               <FieldLabel tip="Only letters, no digits or underscore.">Clean names only</FieldLabel>
               <Switch checked={clean} onCheckedChange={setClean} />
             </div>
 
-            <div className="flex items-center justify-between border border-white/10 p-3">
+            <div className="flex items-center justify-between border border-white/50 p-3">
               <FieldLabel tip="Discard names that don't sound pronounceable in English, regardless of source.">
                 Pronounceable only
               </FieldLabel>
@@ -424,7 +424,7 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
           </>
         }
       >
-        <div className="flex items-center justify-between border border-white/10 px-3 py-2.5">
+        <div className="flex items-center justify-between border border-white/50 px-3 py-2.5">
           <span className="font-label text-xs uppercase tracking-widest text-white/40">Candidates to delete</span>
           <span className="font-mono text-sm text-white">{candidateCount.toLocaleString()}</span>
         </div>

@@ -2,10 +2,10 @@ import { z } from 'zod';
 
 export const appConfigSchema = z.object({
     mojang: z.object({
-        bulkServicesUrl: z.string().url(),
-        bulkMojangUrl: z.string().url(),
-        bulkLegacyUrl: z.string().url(),
-        availableUrl: z.string().url(),
+        bulkServicesUrl: z.string().url().default('https://api.minecraftservices.com/minecraft/profile/lookup/bulk/byname'),
+        bulkMojangUrl: z.string().url().default('https://api.mojang.com/minecraft/profile/lookup/bulk/byname'),
+        bulkLegacyUrl: z.string().url().default('https://api.mojang.com/profiles/minecraft'),
+        availableUrl: z.string().url().default('https://api.minecraftservices.com/minecraft/profile/name/{name}/available'),
     }),
     rateLimit: z.object({
         bulk: z.object({

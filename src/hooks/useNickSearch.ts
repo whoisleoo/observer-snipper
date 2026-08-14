@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 
 function playCompletionSound() {
   try {
-    void new Audio('/success.mp3').play()
+    void new Audio('./success.mp3').play()
   } catch {
     // som e so um extra — nunca deve quebrar o fluxo de busca
   }

@@ -1,6 +1,9 @@
 # Packages the custom installer wizard as a single self-contained portable
-# .exe. It embeds the already-built app (dist/app/win-unpacked, produced via
-# `npm run pack:app`) as a resource and installs it at runtime.
+# .exe. It embeds the already-built app as a single payload.zip (produced by
+# `npm run zip:payload`, which zips dist/app/win-unpacked) and extracts it at
+# install time — a raw directory extraResources copy was tried first, but
+# the portable NSIS self-extractor dropped the deeply-nested app.asar when
+# unpacking itself to %TEMP% at runtime. A single zip file sidesteps that.
 appId: com.observer.installer
 productName: Observer Setup
 extraMetadata:
@@ -16,8 +19,8 @@ files:
   - package.json
   - "!node_modules/**/*"
 extraResources:
-  - from: dist/app/win-unpacked
-    to: payload
+  - from: dist/app/payload.zip
+    to: payload.zip
 asar: true
 win:
   target: portable

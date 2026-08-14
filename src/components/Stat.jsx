@@ -88,7 +88,7 @@ export function CountUp({
       className={['flex items-end leading-none', numCls, className].filter(Boolean).join(' ')}
     >
       {prefix && (
-        <span className={['self-start pt-[0.12em] mr-1 text-white/50', affix].join(' ')}>
+        <span className={['self-start pt-[0.12em] mr-1 text-white/60', affix].join(' ')}>
           {prefix}
         </span>
       )}
@@ -107,7 +107,7 @@ export function CountUp({
           <span
             key={i}
             style={{ display: 'inline-block', height: cellH, lineHeight: `${cellH}px`, verticalAlign: 'top' }}
-            className="text-white/30"
+            className="text-white/60"
           >
             {char}
           </span>
@@ -115,7 +115,7 @@ export function CountUp({
       )}
 
       {suffix && (
-        <span className={['self-start pt-[0.12em] ml-1 text-white/50', affix].join(' ')}>
+        <span className={['self-start pt-[0.12em] ml-1 text-white/60', affix].join(' ')}>
           {suffix}
         </span>
       )}
@@ -128,7 +128,7 @@ function Trend({ value }) {
   if (value == null) return null
   const up      = value > 0
   const flat    = value === 0
-  const color   = flat ? 'text-white/30' : up ? 'text-success' : 'text-error'
+  const color   = flat ? 'text-white/60' : up ? 'text-success' : 'text-error'
   const bg      = flat ? 'bg-white/[0.05]' : up ? 'bg-success/[0.08]' : 'bg-error/[0.08]'
   const Icon    = flat ? Minus : up ? TrendingUp : TrendingDown
   const label   = flat ? '0%' : `${up ? '+' : ''}${value}%`
@@ -158,7 +158,7 @@ export default function Stat({
   return (
     <div className={['flex flex-col gap-3', className].filter(Boolean).join(' ')}>
       {label && (
-        <span className="font-label text-[11px] uppercase tracking-[0.12em] text-white/35">
+        <span className="font-label text-[11px] uppercase tracking-[0.12em] text-white/60">
           {label}
         </span>
       )}
@@ -177,7 +177,7 @@ export default function Stat({
         <div className="flex items-center gap-3 flex-wrap">
           {trend != null && <Trend value={trend} />}
           {description && (
-            <span className="font-body text-xs text-white/30">{description}</span>
+            <span className="font-body text-xs text-white/60">{description}</span>
           )}
         </div>
       )}

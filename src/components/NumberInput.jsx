@@ -2,13 +2,13 @@ import { useId } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const BORDER_STATES = {
-  default: 'border-white/20',
+  default: 'border-white/50',
   error:   'border-error',
   success: 'border-success',
 }
 
 const LABEL_COLORS = {
-  default: 'text-white/40',
+  default: 'text-white/50',
   error:   'text-error',
   success: 'text-success',
 }
@@ -150,7 +150,7 @@ export default function NumberInput({
           tabIndex={-1}
           onClick={decrement}
           disabled={disabled || value <= min}
-          className="py-3 pr-3 text-white/30 hover:text-white transition-colors duration-150 select-none leading-none disabled:opacity-30"
+          className="py-3 pr-3 text-white/70 hover:text-white transition-colors duration-150 select-none leading-none disabled:opacity-30"
         >
           −
         </button>
@@ -176,7 +176,7 @@ export default function NumberInput({
           tabIndex={-1}
           onClick={increment}
           disabled={disabled || value >= max}
-          className="py-3 pl-3 text-white/30 hover:text-white transition-colors duration-150 select-none leading-none disabled:opacity-30"
+          className="py-3 pl-3 text-white/70 hover:text-white transition-colors duration-150 select-none leading-none disabled:opacity-30"
         >
           +
         </button>

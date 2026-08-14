@@ -1,5 +1,5 @@
 const COLORS = {
-    default: 'bg-white/10',
+    default: 'bg-white/50',
     muted:   'bg-gray-800',
     accent:  'bg-accent',
   }

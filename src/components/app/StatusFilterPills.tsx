@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { STATUS_FILTER_GROUPS, STATUS_STYLES, candidateStatus } from '../../lib/candidateStatus'
 
-const INACTIVE_STYLE = 'border-white/10 text-white/30 hover:border-white/25 hover:text-white/60'
+const INACTIVE_STYLE = 'border-white/60 text-white/60 hover:border-white/90 hover:text-white/90'
 
 interface StatusFilterPillsProps {
   candidates: Candidate[]
@@ -33,7 +33,7 @@ function StatusFilterPills({ candidates, active, onToggle }: StatusFilterPillsPr
             onClick={() => onToggle(group.key)}
             aria-pressed={isActive}
             disabled={group.count === 0}
-            className={`inline-flex items-center gap-1.5 border px-2 py-0.5 font-label text-[10px] uppercase tracking-widest transition-colors duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-30 ${
+            className={`inline-flex items-center gap-1.5 border px-2 py-0.5 font-label text-[10px] uppercase tracking-widest transition-colors duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 ${
               isActive ? STATUS_STYLES[group.statuses[0]] : INACTIVE_STYLE
             }`}
           >

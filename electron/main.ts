@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, ipcMain, shell, dialog } from "electron";
 import { registerIpcHandlers } from "./ipc";
 import { getFaviconPath } from "./utils/paths";
 import path from "node:path";
@@ -70,7 +70,17 @@ ipcMain.handle("window:is-maximized", (event) => {
 
 app.whenReady().then(() => {
     createWindow();
-    registerIpcHandlers();
+    try {
+        registerIpcHandlers();
+    } catch (error) {
+        // Without this, a throw here (e.g. bad config) silently leaves every
+        // IPC handler unregistered — the renderer then fails with the far
+        // more confusing "No handler registered for 'x'" for every call.
+        dialog.showErrorBox(
+            "Falha ao iniciar o Observer",
+            error instanceof Error ? error.message : String(error)
+        );
+    }
 });
 
 app.on("window-all-closed", () => {

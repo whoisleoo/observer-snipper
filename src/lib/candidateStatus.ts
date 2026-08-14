@@ -1,10 +1,10 @@
 export const STATUS_STYLES: Record<string, string> = {
   available: 'border-success/40 bg-success/10 text-success',
   free: 'border-info/40 bg-info/10 text-info',
-  taken: 'border-white/10 text-white/30',
-  not_allowed: 'border-white/10 text-white/30',
-  duplicate: 'border-white/10 text-white/30',
-  pending: 'border-white/10 text-white/25',
+  taken: 'border-white/60 text-white/60',
+  not_allowed: 'border-white/60 text-white/60',
+  duplicate: 'border-white/60 text-white/60',
+  pending: 'border-white/60 text-white/60',
 }
 
 export const STATUS_LABELS: Record<string, string> = {

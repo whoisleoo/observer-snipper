@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { useCursorDispatch } from '../hooks/useCursor.js'
 
-const MODEL_URL = '/3d/observer.glb'
+const MODEL_URL = './3d/observer.glb'
 
 const AUTO_SPEED       = 0.90
 const DRAG_SENSITIVITY = 0.012

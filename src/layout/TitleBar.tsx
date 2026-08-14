@@ -11,11 +11,11 @@ function TitleBar() {
 
   return (
     <header
-      className="app-drag flex h-8 shrink-0 select-none items-center justify-between bg-black border-b border-white/10"
+      className="app-drag flex h-8 shrink-0 select-none items-center justify-between bg-black border-b border-white/50"
       onDoubleClick={() => window.electron.window.toggleMaximize()}
     >
       <div className="flex items-center gap-2 px-3">
-        <img src="/favicon.png" alt="" className="h-4 w-4" />
+        <img src="./favicon.png" alt="" className="h-4 w-4" />
         <span className="font-mono text-xs text-white/70">Observer</span>
       </div>
 

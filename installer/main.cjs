@@ -1,5 +1,4 @@
-// Custom installer wizard for Observer. Kept as plain CommonJS with no
-// bundler/build step — see installer/renderer for the UI.
+// Custom installer wizard for Observer.
 "use strict";
 
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
@@ -9,9 +8,6 @@ const fssync = require("node:fs");
 const { execFile, spawn } = require("node:child_process");
 
 const APP_DISPLAY_NAME = "Observer";
-// Must match the "name" field in the root package.json — Electron derives
-// app.getName() (and therefore the real app's userData path) from it, and
-// this installer needs that same value to offer "also remove my data".
 const APP_PACKAGE_NAME = "observer";
 const APP_EXE_NAME = "Observer.exe";
 const UNINSTALLER_EXE_NAME = "Uninstall Observer.exe";
@@ -21,13 +17,12 @@ const isUninstallMode = process.argv.includes("--uninstall");
 
 let mainWindow = null;
 
-function getPayloadDir() {
+function getPayloadZipPath() {
     if (app.isPackaged) {
-        return path.join(process.resourcesPath, "payload");
+        return path.join(process.resourcesPath, "payload.zip");
     }
-    // Dev fallback: point at the unpacked app produced by `npm run pack:app`.
-    const devPayload = path.resolve(__dirname, "..", "dist", "app", "win-unpacked");
-    return fssync.existsSync(devPayload) ? devPayload : null;
+    const devZip = path.resolve(__dirname, "..", "dist", "app", "payload.zip");
+    return fssync.existsSync(devZip) ? devZip : null;
 }
 
 function createWindow() {
@@ -60,47 +55,17 @@ function reportProgress(percent, label) {
     send("installer:progress", { percent: Math.max(0, Math.min(100, Math.round(percent))), label });
 }
 
-async function collectEntries(sourceDir) {
-    const dirs = [];
-    const files = [];
-
-    async function walk(rel) {
-        const abs = path.join(sourceDir, rel);
-        const entries = await fs.readdir(abs, { withFileTypes: true });
-        for (const entry of entries) {
-            const entryRel = path.join(rel, entry.name);
-            if (entry.isDirectory()) {
-                dirs.push(entryRel);
-                await walk(entryRel);
-            } else if (entry.isFile()) {
-                const { size } = await fs.stat(path.join(sourceDir, entryRel));
-                files.push({ rel: entryRel, size });
-            }
+async function dirSizeBytes(dir) {
+    let total = 0;
+    for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
+        const abs = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            total += await dirSizeBytes(abs);
+        } else if (entry.isFile()) {
+            total += (await fs.stat(abs)).size;
         }
     }
-
-    await walk(".");
-    return { dirs, files };
-}
-
-async function copyPayload(sourceDir, destDir, onProgress) {
-    await fs.mkdir(destDir, { recursive: true });
-    const { dirs, files } = await collectEntries(sourceDir);
-
-    for (const dir of dirs) {
-        await fs.mkdir(path.join(destDir, dir), { recursive: true });
-    }
-
-    const totalBytes = files.reduce((sum, f) => sum + f.size, 0) || 1;
-    let copiedBytes = 0;
-
-    for (const file of files) {
-        await fs.copyFile(path.join(sourceDir, file.rel), path.join(destDir, file.rel));
-        copiedBytes += file.size;
-        onProgress(copiedBytes / totalBytes);
-    }
-
-    return totalBytes;
+    return total;
 }
 
 function runCommand(command, args) {
@@ -119,6 +84,13 @@ function psEscape(value) {
     return String(value).replace(/'/g, "''");
 }
 
+
+async function extractZip(zipPath, destDir) {
+    await fs.mkdir(destDir, { recursive: true });
+    const script = `Expand-Archive -LiteralPath '${psEscape(zipPath)}' -DestinationPath '${psEscape(destDir)}' -Force`;
+    await runCommand("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script]);
+}
+
 async function createShortcut(lnkPath, targetPath, workingDir) {
     await fs.mkdir(path.dirname(lnkPath), { recursive: true });
     const script = [
@@ -131,6 +103,15 @@ async function createShortcut(lnkPath, targetPath, workingDir) {
     ].join("; ");
 
     await runCommand("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script]);
+}
+
+async function closeRunningApp(installDir) {
+    const exePath = path.join(installDir, APP_EXE_NAME);
+    
+    const script = `Get-CimInstance Win32_Process -Filter "Name='${APP_EXE_NAME}'" | Where-Object { $_.ExecutablePath -eq '${psEscape(exePath)}' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }`;
+    await runCommand("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script]);
+  
+    await new Promise((resolve) => setTimeout(resolve, 500));
 }
 
 async function removeShortcutIfExists(lnkPath) {
@@ -173,13 +154,11 @@ async function deleteUninstallRegistryEntry() {
     try {
         await runCommand("reg", ["delete", UNINSTALL_REG_KEY, "/f"]);
     } catch {
-        // Key may already be gone — not fatal.
     }
 }
 
 ipcMain.handle("installer:get-info", async () => {
-    // Electron's app.getPath() has no "localAppData" key — %LOCALAPPDATA%
-    // has to be read directly from the environment on Windows.
+  
     const localAppData = process.env.LOCALAPPDATA || app.getPath("appData");
     const defaultInstallDir = path.join(localAppData, APP_DISPLAY_NAME);
     return {
@@ -187,10 +166,11 @@ ipcMain.handle("installer:get-info", async () => {
         appName: APP_DISPLAY_NAME,
         appVersion: app.getVersion(),
         defaultInstallDir,
-        // In uninstall mode the wizard runs from "Uninstall Observer.exe",
-        // which install placed directly inside the install directory.
-        installDir: isUninstallMode ? path.dirname(process.execPath) : null,
-        payloadAvailable: getPayloadDir() !== null,
+      
+        installDir: isUninstallMode
+            ? path.dirname(process.env.PORTABLE_EXECUTABLE_FILE || process.execPath)
+            : null,
+        payloadAvailable: getPayloadZipPath() !== null,
     };
 });
 
@@ -217,41 +197,41 @@ ipcMain.on("installer:start-install", async (_event, options) => {
     const { installDir, desktopShortcut, startMenuShortcut } = options;
 
     try {
-        const payloadDir = getPayloadDir();
-        if (!payloadDir) {
-            throw new Error("Payload do app não encontrado. Rode \"npm run pack:app\" antes de gerar o instalador.");
+        const payloadZip = getPayloadZipPath();
+        if (!payloadZip) {
+            throw new Error("Payload not found.");
         }
 
-        reportProgress(2, "Preparando instalação…");
+        reportProgress(2, "Brewing…");
         await fs.mkdir(installDir, { recursive: true });
 
-        reportProgress(5, "Copiando arquivos…");
-        const payloadBytes = await copyPayload(payloadDir, installDir, (fraction) => {
-            reportProgress(5 + fraction * 65, "Copiando arquivos…");
-        });
+        reportProgress(10, "Processing…");
+        await extractZip(payloadZip, installDir);
+        reportProgress(65, "Cooking...");
+        const payloadBytes = await dirSizeBytes(installDir);
 
         const exePath = path.join(installDir, APP_EXE_NAME);
 
         if (startMenuShortcut) {
-            reportProgress(72, "Criando atalho no menu Iniciar…");
+            reportProgress(72, "Architecting…");
             await createShortcut(startMenuShortcutPath(), exePath, installDir);
         }
 
         if (desktopShortcut) {
-            reportProgress(78, "Criando atalho na área de trabalho…");
+            reportProgress(78, "Debugging…");
             await createShortcut(desktopShortcutPath(), exePath, installDir);
         }
 
-        reportProgress(85, "Registrando desinstalador…");
+        reportProgress(85, "Deploying…");
         const uninstallerSource = process.env.PORTABLE_EXECUTABLE_FILE || process.execPath;
         const uninstallerDest = path.join(installDir, UNINSTALLER_EXE_NAME);
         await fs.copyFile(uninstallerSource, uninstallerDest);
 
-        reportProgress(93, "Atualizando registro do Windows…");
+        reportProgress(93, "Bootstrapping…");
         const uninstallerStat = await fs.stat(uninstallerDest);
         await writeUninstallRegistryEntry(installDir, uninstallerDest, payloadBytes + uninstallerStat.size);
 
-        reportProgress(100, "Concluído.");
+        reportProgress(100, "Done!.");
         send("installer:complete", { mode: "install", installDir });
     } catch (error) {
         send("installer:failed", { message: error instanceof Error ? error.message : String(error) });
@@ -262,19 +242,22 @@ ipcMain.on("installer:start-uninstall", async (_event, options) => {
     const { installDir, removeUserData } = options;
 
     try {
-        reportProgress(10, "Removendo atalhos…");
+        reportProgress(5, "Closing Observer…");
+        await closeRunningApp(installDir);
+
+        reportProgress(10, "Deleting shortcuts…");
         await removeShortcutIfExists(startMenuShortcutPath());
         await removeShortcutIfExists(desktopShortcutPath());
 
-        reportProgress(35, "Removendo entrada do Windows…");
+        reportProgress(35, "Deleting System32…");
         await deleteUninstallRegistryEntry();
 
         if (removeUserData) {
-            reportProgress(55, "Removendo dados salvos…");
+            reportProgress(55, "Deleting saved data…");
             await fs.rm(userDataDir(), { recursive: true, force: true });
         }
 
-        reportProgress(70, "Removendo arquivos do programa…");
+        reportProgress(70, "Removing file…");
         if (fssync.existsSync(installDir)) {
             const entries = await fs.readdir(installDir);
             for (const entry of entries) {
@@ -283,20 +266,15 @@ ipcMain.on("installer:start-uninstall", async (_event, options) => {
             }
         }
 
-        reportProgress(100, "Concluído.");
+        reportProgress(100, "Done!.");
         send("installer:complete", { mode: "uninstall", installDir });
     } catch (error) {
         send("installer:failed", { message: error instanceof Error ? error.message : String(error) });
     }
 });
 
-// The running "Uninstall Observer.exe" cannot delete itself or its parent
-// folder while it's still executing. This schedules that final cleanup in a
-// detached process and then exits, freeing the file lock.
+
 ipcMain.on("installer:finish-uninstall-and-quit", (_event, installDir) => {
-    // "ping" is used instead of "timeout" for the delay — timeout.exe fails
-    // with "Input redirection is not supported" when stdin isn't a console,
-    // which is exactly the case for a detached child of a GUI app.
     const script = `ping -n 3 127.0.0.1 >nul & rmdir /s /q "${installDir}"`;
     spawn("cmd.exe", ["/c", script], { detached: true, stdio: "ignore", windowsHide: true }).unref();
     app.quit();

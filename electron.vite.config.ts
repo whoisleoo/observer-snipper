@@ -24,6 +24,10 @@ export default defineConfig({
     },
     renderer: {
         root: ".",
+        // Packaged app is loaded via loadFile() (file:// protocol), where
+        // the default absolute base ("/") resolves against the filesystem
+        // root instead of the app's own out/renderer/ folder.
+        base: "./",
         build: {
             rollupOptions: {
                 input: resolve("index.html"),

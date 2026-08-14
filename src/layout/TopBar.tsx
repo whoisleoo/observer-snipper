@@ -9,7 +9,7 @@ interface TopBarProps {
 
 function TopBar({ username, onLogout }: TopBarProps) {
   return (
-    <header className="flex shrink-0 items-center justify-between border-b border-white/10 px-6 py-3">
+    <header className="flex shrink-0 items-center justify-between border-b border-white/50 px-6 py-3">
       <div className="flex items-center gap-3">
         <img src={`https://mc-heads.net/head/${username}`} alt="" className="h-10 w-10" />
         <Text as="span" font="body" size="sm" animate={false} className="text-white/70">
@@ -23,7 +23,7 @@ function TopBar({ username, onLogout }: TopBarProps) {
         <button
           type="button"
           onClick={onLogout}
-          className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-white/40 transition-colors hover:text-error!"
+          className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-white/80 transition-colors hover:text-error!"
         >
           <LogOut size={13} />
           Sign out

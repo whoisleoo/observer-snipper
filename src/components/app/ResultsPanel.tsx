@@ -18,7 +18,7 @@ const PER_PAGE = 25
 function InfoTip({ text }: { text: string }) {
   return (
     <Tooltip side="top" content={text}>
-      <Info size={13} className="cursor-help text-white/30 transition-colors hover:text-white/70" />
+      <Info size={13} className="cursor-help text-white/60 transition-colors hover:text-white/70" />
     </Tooltip>
   )
 }
@@ -142,8 +142,8 @@ function ResultsPanel({ status, candidates, progress, onVerify }: ResultsPanelPr
 
   return (
     <main className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex shrink-0 items-center gap-8 border-b border-white/10 px-6 py-4">
-        <Stat value={candidates.length} label="Total" size="sm" animate={false} />
+      <div className="flex shrink-0 items-center gap-8 border-b border-white/50 px-6 py-4 ">
+        <Stat  value={candidates.length} label="Total" size="sm" animate={false} />
         <Stat value={freeCount} label="Free" size="sm" animate={false} />
         <Stat value={availableCount} label="Available" size="sm" animate={false} />
 
@@ -162,8 +162,8 @@ function ResultsPanel({ status, candidates, progress, onVerify }: ResultsPanelPr
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 border-b border-white/10 px-6 py-3">
-        <span className="font-label text-[10px] uppercase tracking-widest text-white/30">Filter</span>
+      <div className="flex shrink-0 items-center gap-2 border-b border-white/50 px-6 py-3">
+        <span className="font-label text-[10px] uppercase tracking-widest text-white/60">Filter</span>
         <StatusFilterPills candidates={candidates} active={activeFilters} onToggle={handleToggleFilter} />
       </div>
 
@@ -212,7 +212,7 @@ function ResultsPanel({ status, candidates, progress, onVerify }: ResultsPanelPr
       </div>
 
       {sortedTableData.length > 0 && (
-        <div className="shrink-0 border-t border-white/10 px-6 py-4">
+        <div className="shrink-0 border-t border-white/50 px-6 py-4">
           <Pagination
             page={currentPage}
             total={pageCount}
