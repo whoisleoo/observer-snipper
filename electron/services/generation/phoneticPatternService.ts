@@ -1,10 +1,7 @@
-// Templates foneticos tipo "cvcv"/"ccvc": c=consoante v=vogal l=letra
-// d=digito x=qualquer caractere de nick, ou um literal a-z/0-9/_.
-//
-// Nota: aqui "consoante"/"vogal" e a divisao estrita do alfabeto (y conta
-// como consoante) — diferente do phonotacticService, que trata y como
-// vogal pra fins de pronunciabilidade. Sao dois modelos separados de
-// proposito, igual no script original.
+
+/*      Templates foneticos tipo "cvcv"/"ccvc": c=consoante v=vogal l=letra
+*       d=digito x=qualquer caractere de nick, ou um literal a-z/0-9/_.
+*/
 
 const VOWELS = "aeiou";
 const DIGITS = "0123456789";
@@ -34,7 +31,6 @@ function patternSlots(pattern: string): string[] {
     return slots;
 }
 
-/** Quantos nomes o padrao cobre, sem materializar nenhum. */
 export function patternSpace(pattern: string): number {
     return patternSlots(pattern).reduce((acc, slot) => acc * slot.length, 1);
 }
@@ -52,12 +48,10 @@ function* cartesianProduct(slots: string[]): Generator<string> {
     }
 }
 
-/** Todos os nomes que casam com o padrao, em ordem lexicografica. Cuidado com padroes grandes (ex: "xxxxxxxx"). */
 export function iterPattern(pattern: string): Generator<string> {
     return cartesianProduct(patternSlots(pattern));
 }
 
-/** N nomes sorteados do padrao, sem materializar o espaco todo. */
 export function samplePattern(pattern: string, count: number, rng: () => number = Math.random): string[] {
     const slots = patternSlots(pattern);
     const space = slots.reduce((acc, slot) => acc * slot.length, 1);
