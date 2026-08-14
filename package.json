@@ -7,7 +7,11 @@
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
-    "preview": "electron-vite preview"
+    "preview": "electron-vite preview",
+    "icon:generate": "electron scripts/generate-icon.mjs",
+    "pack:app": "npm run build && electron-builder --config electron-builder.app.yml",
+    "dist:installer": "electron-builder --config electron-builder.installer.yml",
+    "installer:build": "npm run pack:app && npm run dist:installer"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.20",

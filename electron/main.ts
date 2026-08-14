@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
 import { registerIpcHandlers } from "./ipc";
+import { getFaviconPath } from "./utils/paths";
 import path from "node:path";
 
 
@@ -13,7 +14,7 @@ function createWindow() {
         minWidth: 960,
         minHeight: 640,
         frame: false,
-        icon: path.join(__dirname, "../../public/favicon.png"),
+        icon: getFaviconPath(),
 
         webPreferences: {
             preload: path.join(__dirname, "../preload/preload.cjs"),
@@ -41,7 +42,7 @@ function createWindow() {
     if (!app.isPackaged) {
         win.loadURL(process.env.ELECTRON_RENDERER_URL ?? "http://localhost:5173");
     } else {
-        win.loadFile(path.join(__dirname, "../dist/index.html"));
+        win.loadFile(path.join(__dirname, "../renderer/index.html"));
     }
 }
 

@@ -1,0 +1,26 @@
+# Packages the custom installer wizard as a single self-contained portable
+# .exe. It embeds the already-built app (dist/app/win-unpacked, produced via
+# `npm run pack:app`) as a resource and installs it at runtime.
+appId: com.observer.installer
+productName: Observer Setup
+extraMetadata:
+  name: observer-installer
+  main: installer/main.cjs
+directories:
+  output: dist/installer
+  buildResources: build
+icon: build/icon.png
+files:
+  - installer/**/*
+  - "!installer/**/*.md"
+  - package.json
+  - "!node_modules/**/*"
+extraResources:
+  - from: dist/app/win-unpacked
+    to: payload
+asar: true
+win:
+  target: portable
+  icon: build/icon.png
+portable:
+  artifactName: ObserverSetup.exe

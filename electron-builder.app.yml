@@ -1,0 +1,18 @@
+# Packages the actual Observer app as an unpacked Windows folder.
+# This is not a distributable installer by itself — it is the payload that
+# electron-builder.installer.yml copies onto the user's machine at install time.
+appId: com.observer.app
+productName: Observer
+directories:
+  output: dist/app
+  buildResources: build
+icon: build/icon.png
+files:
+  - out/**/*
+  - package.json
+  - "!**/*.map"
+asarUnpack:
+  - "**/*.node"
+win:
+  target: dir
+  icon: build/icon.png

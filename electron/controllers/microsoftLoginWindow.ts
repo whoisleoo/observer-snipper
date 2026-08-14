@@ -1,5 +1,5 @@
 import { BrowserWindow } from "electron";
-import path from "node:path";
+import { getFaviconPath } from "../utils/paths";
 
 export function openMicrosoftLoginWindow(authorizationUrl: string, redirectUri: string): Promise<string>{
     return new Promise((resolve, reject) => {
@@ -8,7 +8,7 @@ export function openMicrosoftLoginWindow(authorizationUrl: string, redirectUri: 
             height: 650,
             show: true,
             autoHideMenuBar: true,
-            icon: path.join(__dirname, "../../public/favicon.png"),
+            icon: getFaviconPath(),
             webPreferences: {
                 nodeIntegration: false,
                 contextIsolation: true,

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:;" />
+    <title>Observer Setup</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <header class="titlebar" id="titlebar">
+        <div class="titlebar-brand">
+            <img src="assets/icon.png" alt="" width="16" height="16" />
+            <span id="titlebar-label">Observer Setup</span>
+        </div>
+        <div class="titlebar-controls">
+            <button type="button" id="btn-minimize" aria-label="Minimizar">
+                <svg viewBox="0 0 24 24" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+            </button>
+            <button type="button" id="btn-close" class="danger" aria-label="Fechar">
+                <svg viewBox="0 0 24 24" width="14" height="14"><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="stage">
+        <!-- Welcome -->
+        <section class="screen active" data-screen="welcome">
+            <img class="logo" src="assets/observer.webp" alt="" />
+            <h1 id="welcome-title">Install Observer</h1>
+            <p class="body" id="welcome-body">
+                Setup will install Observer on your system. This installation process does not collect or send any data to third parties.
+            </p>
+            <div class="actions">
+                <button type="button" class="btn ghost" data-action="cancel">Cancel</button>
+                <button type="button" class="btn primary" id="welcome-continue">Continue</button>
+            </div>
+        </section>
+
+        <!-- Install options -->
+        <section class="screen" data-screen="options">
+            <h2>Installation location</h2>
+            <div class="field">
+                <input type="text" id="install-dir" readonly />
+                <button type="button" class="btn outline" id="btn-choose-dir">Change</button>
+            </div>
+
+            <div class="checkbox-row">
+                <label class="checkbox">
+                    <input type="checkbox" id="chk-desktop-shortcut" checked />
+                    <span class="box"></span>
+                    Create shortcut on desktop
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="chk-startmenu-shortcut" checked />
+                    <span class="box"></span>
+                    Create shortcut from Start menu
+                </label>
+            </div>
+
+            <div class="actions">
+                <button type="button" class="btn ghost" data-action="back-to-welcome">Back</button>
+                <button type="button" class="btn primary" id="btn-start-install">Install</button>
+            </div>
+        </section>
+
+        <!-- Uninstall confirm -->
+        <section class="screen" data-screen="uninstall-confirm">
+            <h2>Installation location</h2>
+            <div class="field">
+                <input type="text" id="uninstall-dir" readonly />
+            </div>
+            <div class="checkbox-row">
+                <label class="checkbox">
+                    <input type="checkbox" id="chk-remove-data" />
+                    <span class="box"></span>
+                    Remove all my saved data
+                </label>
+            </div>
+            <div class="actions">
+                <button type="button" class="btn ghost" data-action="cancel">Cancel</button>
+                <button type="button" class="btn primary" id="btn-start-uninstall">Uninstall</button>
+            </div>
+        </section>
+
+        <!-- Progress -->
+        <section class="screen" data-screen="progress">
+            <h2 id="progress-title">Installing...</h2>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <p class="body muted" id="progress-label">Preparing...</p>
+        </section>
+
+        <!-- Done -->
+        <section class="screen" data-screen="done">
+            <svg class="check" viewBox="0 0 24 24" width="40" height="40">
+                <circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="1.5" />
+                <path d="M7 12.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <h1 id="done-title">Observer Installed</h1>
+            <p class="body" id="done-body">The installation was successfully completed.</p>
+            <div class="checkbox-row" id="done-launch-row">
+                <label class="checkbox">
+                    <input type="checkbox" id="chk-launch-after" checked />
+                    <span class="box"></span>
+                    Open Observer now.
+                </label>
+            </div>
+            <div class="actions">
+                <button type="button" class="btn primary" id="btn-finish">Concluir</button>
+            </div>
+        </section>
+
+        <!-- Error -->
+        <section class="screen" data-screen="error">
+            <h1>Oops! Something went wrong.</h1>
+            <p class="body" id="error-message">Unknow error.</p>
+            <div class="actions">
+                <button type="button" class="btn ghost" data-action="cancel">Close</button>
+                <button type="button" class="btn primary" id="btn-retry">Try again</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -13,6 +13,9 @@ dist-ssr
 out
 *.local
 
+# Generated installer icon (regenerate with `npm run icon:generate`)
+build/icon.png
+
 # Env
 .env
 
