@@ -1,15 +1,15 @@
 import { useRef, useEffect } from 'react'
-import { motion, useSpring, useVelocity, useTransform, useInView } from 'motion/react'
+import { motion, useSpring, useVelocity, useTransform, useInView } from 'framer-motion'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 
 /* ─── Config ─────────────────────────────────────────────────── */
 const SPRING = { stiffness: 35, damping: 11, mass: 1.8 }
 
 const SIZES = {
-  sm: { cellH: 40,  numCls: 'text-4xl  font-display tabular-nums', affix: 'text-2xl'   },
-  md: { cellH: 56,  numCls: 'text-5xl  font-display tabular-nums', affix: 'text-3xl'   },
-  lg: { cellH: 72,  numCls: 'text-7xl  font-display tabular-nums', affix: 'text-4xl'   },
-  xl: { cellH: 96,  numCls: 'text-8xl  font-display tabular-nums', affix: 'text-5xl'   },
+  sm: { cellH: 40,  numCls: 'text-4xl  font-mono tabular-nums', affix: 'text-2xl'   },
+  md: { cellH: 56,  numCls: 'text-5xl  font-mono tabular-nums', affix: 'text-3xl'   },
+  lg: { cellH: 72,  numCls: 'text-7xl  font-mono tabular-nums', affix: 'text-4xl'   },
+  xl: { cellH: 96,  numCls: 'text-8xl  font-mono tabular-nums', affix: 'text-5xl'   },
 }
 
 /* ─── Single digit reel ─────────────────────────────────────── */

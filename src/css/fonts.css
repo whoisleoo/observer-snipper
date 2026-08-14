@@ -13,6 +13,15 @@
     font-style: normal;
     font-display: swap;
   }
+
+    
+  @font-face {
+    font-family: 'Monocraft';
+    src: url('/fonts/monocraft/Monocraft.otf') format('opentype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+  }
   
   @font-face {
     font-family: 'ClashDisplay';

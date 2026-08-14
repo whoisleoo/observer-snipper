@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect, useId, useCallback } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Search, X, Loader2 } from 'lucide-react'
-import gsap from 'gsap'
 
 /* ─── Border / label state maps (mirrors Input) ──────────────── */
 const BORDERS = {
@@ -76,23 +75,10 @@ export default function SearchField({
     inputRef.current?.focus()
   }, [onChange])
 
-  const handleFocus = useCallback(() => {
-    if (!gsapBorder || !borderLineRef.current) return
-    gsap.fromTo(
-      borderLineRef.current,
-      { clipPath: 'inset(0 100% 0 0)' },
-      { clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease: 'none' }
-    )
-  }, [gsapBorder])
-
-  const handleBlur = useCallback(() => {
-    if (!gsapBorder || !borderLineRef.current) return
-    gsap.to(borderLineRef.current, {
-      clipPath: 'inset(0 100% 0 0)',
-      duration: 0.35,
-      ease: 'power2.in',
-    })
-  }, [gsapBorder])
+  // gsapBorder desligado: sem gsap instalado, o toggle de borda animada
+  // (abaixo) fica estatico em vez de fazer a revelacao em clip-path.
+  const handleFocus = useCallback(() => {}, [])
+  const handleBlur = useCallback(() => {}, [])
 
   const borderCls = BORDERS[state] ?? BORDERS.default
   const labelCls  = LABEL_COLORS[state] ?? LABEL_COLORS.default

@@ -1,5 +1,5 @@
 import { useId, useEffect, useRef } from 'react'
-import { useAnimate } from 'motion/react'
+import { useAnimate } from 'framer-motion'
 
 const BORDER_STATES = {
   default: 'border-white/20 focus-within:border-white/60',

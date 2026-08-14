@@ -1,29 +1,9 @@
-import { motion } from 'framer-motion'
-
 interface MicrosoftSignInButtonProps {
   onClick: () => void
   loading?: boolean
   disabled?: boolean
-}
-
-const textVariants = {
-  initial: { y: '0%' },
-  hovered: { y: '-100%' },
-}
-
-const cloneVariants = {
-  initial: { y: '100%' },
-  hovered: { y: '0%' },
-}
-
-const overlayVariants = {
-  initial: { scaleY: 0 },
-  hovered: { scaleY: 1 },
-}
-
-const transition = {
-  duration: 0.45,
-  ease: [0.76, 0, 0.24, 1] as const,
+  /** Ultimo usuario conhecido — personaliza o texto pra "Sign in as {username}" em vez do generico. */
+  username?: string | null
 }
 
 function MicrosoftLogo() {
@@ -37,47 +17,32 @@ function MicrosoftLogo() {
   )
 }
 
-export default function MicrosoftSignInButton({ onClick, loading = false, disabled = false }: MicrosoftSignInButtonProps) {
-  const label = loading ? 'Signing in…' : 'Sign in with Microsoft'
+// Hover simples via CSS puro (opacity/scale) em vez de troca de cor via
+// framer-motion — o slide de overlay anterior dependia de propagacao de
+// variant por 3 niveis de motion.span aninhados e nao dava pra garantir
+// visualmente em ambos os temas. Opacity sempre escurece de forma visivel,
+// nao importa a cor de base nem o tema.
+export default function MicrosoftSignInButton({
+  onClick,
+  loading = false,
+  disabled = false,
+  username = null,
+}: MicrosoftSignInButtonProps) {
+  const label = loading ? 'Signing in…' : username ? `Sign in as ${username}` : 'Sign in with Microsoft'
 
   return (
-    <motion.button
+    <button
       type="button"
       onClick={onClick}
       disabled={disabled || loading}
-      initial="initial"
-      whileHover={disabled || loading ? undefined : 'hovered'}
-      className="relative inline-flex h-12 items-center justify-center gap-3 overflow-hidden rounded-none border border-white bg-white px-6 font-label text-base text-black select-none disabled:pointer-events-none disabled:opacity-50"
+      className="inline-flex h-12 items-center justify-center gap-3 rounded-none border border-white bg-white px-6 font-label text-base text-black select-none transition-all duration-150 hover:opacity-80 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
     >
-      <span className="relative z-10 flex items-center gap-3">
-        {loading ? (
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
-        ) : (
-          <MicrosoftLogo />
-        )}
-
-        <motion.span className="relative block overflow-hidden leading-none">
-          <motion.span className="block" variants={textVariants} transition={transition}>
-            {label}
-          </motion.span>
-          <motion.span
-            aria-hidden="true"
-            className="absolute inset-0 block text-white"
-            variants={cloneVariants}
-            transition={transition}
-          >
-            {label}
-          </motion.span>
-        </motion.span>
-      </span>
-
-      <motion.span
-        aria-hidden="true"
-        className="absolute inset-0 z-0 bg-black"
-        variants={overlayVariants}
-        transition={transition}
-        style={{ transformOrigin: 'bottom' }}
-      />
-    </motion.button>
+      {loading ? (
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+      ) : (
+        <MicrosoftLogo />
+      )}
+      <span>{label}</span>
+    </button>
   )
 }

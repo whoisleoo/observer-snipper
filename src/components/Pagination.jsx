@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const EASE = [0.32, 0.72, 0, 1]

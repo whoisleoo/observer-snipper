@@ -1,11 +1,17 @@
+import dotenv from "dotenv";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
 import { registerIpcHandlers } from "./ipc";
 import path from "node:path";
+
+
+dotenv.config();
 
 function createWindow() {
     const win = new BrowserWindow({
         width: 1280,
         height: 720,
+        minWidth: 960,
+        minHeight: 640,
         frame: false,
         icon: path.join(__dirname, "../../public/favicon.png"),
 
@@ -19,8 +25,7 @@ function createWindow() {
     win.on("maximize", () => win.webContents.send("window:maximized-changed", true));
     win.on("unmaximize", () => win.webContents.send("window:maximized-changed", false));
 
-    // Links (ex: rodapé) devem abrir no navegador padrão, não navegar
-    // a própria janela do app pra fora.
+   
     win.webContents.on("will-navigate", (event, url) => {
         if (url !== win.webContents.getURL()) {
             event.preventDefault();

@@ -32,25 +32,28 @@ const VARIANTS = {
     base:       'bg-accent text-accent-contrast border border-accent/50',
     overlay:    'bg-white',
     hoverText:  'text-accent-contrast',
-    iconColors: null,
+    iconClass:  'text-accent-contrast',
   },
   solid: {
     base:       'bg-white text-black border border-white',
     overlay:    'bg-black',
     hoverText:  'text-white',
-    iconColors: { initial: '#000000', hovered: '#ffffff' },
+    // Classes de tema (nao hex fixo) — assim acompanham o data-theme E o
+    // hover real via group-hover, em vez de depender do color interpolado
+    // pelo framer-motion (que nao seguia o tema e sumia o icone).
+    iconClass:  'text-black group-hover:text-white',
   },
   outline: {
     base:       'bg-transparent text-white border border-white/50',
     overlay:    'bg-white',
     hoverText:  'text-black',
-    iconColors: { initial: '#ffffff', hovered: '#000000' },
+    iconClass:  'text-white group-hover:text-black',
   },
   ghost: {
     base:       'bg-transparent text-white border border-white/20',
     overlay:    'bg-transparent',
     hoverText:  'text-accent',
-    iconColors: null,
+    iconClass:  'text-white group-hover:text-accent',
   },
 }
 
@@ -82,7 +85,7 @@ export default function Button({
   if (state === 'success') stateClass = 'border-success text-success'
 
   const baseClass = [
-    'relative inline-flex items-center justify-center',
+    'group relative inline-flex items-center justify-center',
     'overflow-hidden uppercase font-mono font-semibold rounded-lg',
     'select-none',
     s,
@@ -100,20 +103,9 @@ export default function Button({
         ) : (
           <>
             {icon && (
-              v.iconColors ? (
-                <motion.span
-                  className="shrink-0"
-                  variants={{
-                    initial: { color: v.iconColors.initial },
-                    hovered: { color: v.iconColors.hovered },
-                  }}
-                  transition={transition}
-                >
-                  {icon}
-                </motion.span>
-              ) : (
-                <span className="shrink-0">{icon}</span>
-              )
+              <span className={['shrink-0 transition-colors duration-300', v.iconClass].join(' ')}>
+                {icon}
+              </span>
             )}
             <motion.span className="relative block overflow-hidden leading-none">
               <motion.span className="block" variants={textVariants} transition={transition}>

@@ -1,16 +1,18 @@
 import * as ProgressPrimitive from '@radix-ui/react-progress'
-import { motion } from 'motion/react'
+import { motion } from 'framer-motion'
 
 const FILL_COLORS = {
   default: 'bg-accent',
   error:   'bg-error',
   success: 'bg-success',
+  warning: 'bg-warning',
 }
 
 const STROKE_COLORS = {
   default: 'stroke-accent',
   error:   'stroke-error',
   success: 'stroke-success',
+  warning: 'stroke-warning',
 }
 
 const TRACK_HEIGHTS = {

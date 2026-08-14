@@ -1,5 +1,5 @@
 import * as SwitchPrimitive from '@radix-ui/react-switch'
-import { motion } from 'motion/react'
+import { motion } from 'framer-motion'
 
 const THUMB_TRANSITION = {
   type: 'spring',
@@ -40,7 +40,13 @@ export default function Switch({
       >
         <SwitchPrimitive.Thumb asChild>
           <motion.span
-            className="absolute top-[2.3px] w-3.5 h-3.5 rounded-full bg-white block"
+            className={[
+              'absolute top-[3.0px] w-3 h-3 rounded-full block',
+              // bg-accent do track (quando ligado) e branco no tema escuro —
+              // a bolinha precisa da cor de CONTRASTE do accent, senao fica
+              // branco em cima de branco.
+              checked ? 'bg-accent-contrast' : 'bg-white',
+            ].join(' ')}
             animate={{ x: checked ? 18 : 2 }}
             transition={THUMB_TRANSITION}
           />

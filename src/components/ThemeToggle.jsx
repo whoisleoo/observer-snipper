@@ -1,6 +1,6 @@
 import { flushSync } from 'react-dom'
 import { Sun, Moon } from 'lucide-react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme, useThemeDispatch } from '../hooks/useTheme.js'
 import { useCursorDispatch } from '../hooks/useCursor.js'
 
@@ -60,7 +60,9 @@ export default function ThemeToggle({ className = '' }) {
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       className={[
         'relative flex items-center justify-center w-8 h-8',
-        'text-white/50 hover:text-white transition-colors duration-200',
+        // precisa de um fundo no hover, nao so cor de texto — so opacidade
+        // de texto e um sinal fraco demais de "isso e clicavel".
+        'text-white/50 hover:bg-white/15 hover:text-white transition-colors duration-150',
         className,
       ].filter(Boolean).join(' ')}
       onMouseEnter={() => setVariant('hover')}

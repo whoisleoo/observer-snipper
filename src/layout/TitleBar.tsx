@@ -16,7 +16,7 @@ function TitleBar() {
     >
       <div className="flex items-center gap-2 px-3">
         <img src="/favicon.png" alt="" className="h-4 w-4" />
-        <span className="font-label text-xs text-white/70">Observer</span>
+        <span className="font-mono text-xs text-white/70">Observer</span>
       </div>
 
       <div className="app-no-drag flex h-full">
@@ -24,7 +24,7 @@ function TitleBar() {
           type="button"
           aria-label="Minimizar"
           onClick={() => window.electron.window.minimize()}
-          className="flex h-full w-11 items-center justify-center text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+          className="flex h-full w-11 items-center justify-center text-white/60 transition-colors hover:bg-white/15 hover:text-white"
         >
           <Minus size={14} />
         </button>
@@ -32,7 +32,7 @@ function TitleBar() {
           type="button"
           aria-label={isMaximized ? 'Restaurar' : 'Maximizar'}
           onClick={() => window.electron.window.toggleMaximize()}
-          className="flex h-full w-11 items-center justify-center text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+          className="flex h-full w-11 items-center justify-center text-white/60 transition-colors hover:bg-white/15 hover:text-white"
         >
           {isMaximized ? <Copy size={12} /> : <Square size={12} />}
         </button>

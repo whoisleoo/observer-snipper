@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowUp, ChevronsUpDown } from 'lucide-react'
 import Checkbox from './Checkbox.jsx'
 
@@ -97,24 +97,40 @@ export default function Table({
   emptyDescription,
   skeletonRows = 6,
   className    = '',
+  sortKey:  controlledSortKey,
+  sortDir:  controlledSortDir  = 'asc',
+  onSortChange,
 }) {
-  const [sortKey, setSortKey]   = useState(null)
-  const [sortDir, setSortDir]   = useState('asc')
+  // Modo controlado: quando onSortChange e passado, o pai decide a ordem
+  // (necessario quando `data` e so uma pagina de uma lista maior ja
+  // ordenada por fora — ordenar so a pagina visivel daria resultado errado).
+  const isControlled = onSortChange != null
+
+  const [internalSortKey, setInternalSortKey] = useState(null)
+  const [internalSortDir, setInternalSortDir] = useState('asc')
   const [selected, setSelected] = useState(new Set())
 
+  const sortKey = isControlled ? controlledSortKey : internalSortKey
+  const sortDir = isControlled ? controlledSortDir : internalSortDir
+
   const toggleSort = (key) => {
-    if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
-    else { setSortKey(key); setSortDir('asc') }
+    const nextDir = sortKey === key ? (sortDir === 'asc' ? 'desc' : 'asc') : 'asc'
+    if (isControlled) {
+      onSortChange(key, nextDir)
+    } else {
+      setInternalSortKey(key)
+      setInternalSortDir(nextDir)
+    }
   }
 
   const sortedData = useMemo(() => {
-    if (!sortKey) return data
+    if (isControlled || !sortKey) return data
     return [...data].sort((a, b) => {
       const av = a[sortKey], bv = b[sortKey]
       const cmp = typeof av === 'number' ? av - bv : String(av ?? '').localeCompare(String(bv ?? ''))
       return sortDir === 'asc' ? cmp : -cmp
     })
-  }, [data, sortKey, sortDir])
+  }, [data, sortKey, sortDir, isControlled])
 
   const allSelected  = data.length > 0 && selected.size === data.length
   const someSelected = selected.size > 0 && !allSelected
@@ -202,11 +218,13 @@ export default function Table({
                   layout
                   transition={{ duration: 0.22, ease: EASE }}
                   className={[
-                    'group border-b border-white/[0.04]',
+                    'group border-b border-white/[0.04] transition-colors duration-150',
+                    // classes de tema em vez de rgba(255,255,255,...) fixo —
+                    // a versao anterior nao acompanhava o tema claro (branco
+                    // em cima de fundo ja claro nao aparece).
+                    isSelected ? 'bg-accent/10' : 'hover:bg-white/10',
                     onRowClick ? 'cursor-pointer' : 'cursor-default',
                   ].filter(Boolean).join(' ')}
-                  animate={{ backgroundColor: isSelected ? 'rgba(197,241,53,0.04)' : 'rgba(255,255,255,0)' }}
-                  whileHover={!isSelected ? { backgroundColor: 'rgba(255,255,255,0.025)' } : undefined}
                   onClick={() => onRowClick?.(row)}
                 >
                   {selectable && (

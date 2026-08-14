@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const BORDER_STATES = {
   default: 'border-white/20',

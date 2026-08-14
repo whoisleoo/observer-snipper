@@ -1,5 +1,7 @@
+export type WaitCallback = (waitUntil: number) => void;
+
 export interface RateLimiter {
-    schedule<T>(task: () => Promise<T>): Promise<T>;
+    schedule<T>(task: () => Promise<T>, onWaiting?: WaitCallback): Promise<T>;
     pause(ms: number): void;
 }
 
@@ -14,11 +16,12 @@ export function createRateLimiter(maxRequests: number, windowMs: number): RateLi
     let pausedUntil = 0;
     let chain: Promise<void> = Promise.resolve();
 
-    async function acquire(): Promise<void> {
+    async function acquire(onWaiting?: WaitCallback): Promise<void> {
         while(true){
             const now = Date.now();
 
             if(now <pausedUntil){
+                onWaiting?.(pausedUntil);
                 await wait(pausedUntil - now);
                 continue;
             }
@@ -32,12 +35,14 @@ export function createRateLimiter(maxRequests: number, windowMs: number): RateLi
                 return;
             }
 
-            await wait(windowMs - (now - hits[0]) + 10);
+            const waitUntil = hits[0] + windowMs + 10;
+            onWaiting?.(waitUntil);
+            await wait(waitUntil - now);
         }
     }
 
     return {
-        async schedule<T>(task: () => Promise<T>): Promise<T>{
+        async schedule<T>(task: () => Promise<T>, onWaiting?: WaitCallback): Promise<T>{
             const previous = chain;
             let release!: () => void;
             chain = new Promise((resolve) => {
@@ -46,7 +51,7 @@ export function createRateLimiter(maxRequests: number, windowMs: number): RateLi
 
             await previous;
             try{
-                await acquire();
+                await acquire(onWaiting);
             }finally{
                 release()
             }

@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { motion } from 'motion/react'
+import { motion } from 'framer-motion'
 
 const SIZES = {
   sm: { size: 16, stroke: 1.75, dot: 3,  gap: 3.5, barW: 2,  barH: 10 },

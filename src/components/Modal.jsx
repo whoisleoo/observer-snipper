@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 
 const SIZES = {
@@ -84,12 +84,12 @@ export default function Modal({
                 {(title || description) && (
                   <div className="border-b border-white/10 p-6 flex flex-col gap-1">
                     {title && (
-                      <Dialog.Title className="font-hooskai text-lg text-white">
+                      <Dialog.Title className="font-heading text-lg text-white">
                         {title}
                       </Dialog.Title>
                     )}
                     {description && (
-                      <Dialog.Description className="text-sm text-white/60 font-mono">
+                      <Dialog.Description className="text-sm text-white/60 font-label">
                         {description}
                       </Dialog.Description>
                     )}

@@ -15,12 +15,25 @@ export interface BulkLookupResult {
 export class TokenInvalidError extends Error {}
 export class AccountSuspendedError extends Error {}
 
+export interface BulkProgressEvent {
+    checked: number;
+    total: number;
+    free: number;
+    taken: number;
+    paused: boolean;
+    pausedUntil?: number;
+}
+
+export type BulkProgressCallback = (event: BulkProgressEvent) => void;
+export type PauseCallback = (pausedUntil: number) => void;
+
 export interface MojangService {
     /** Divide em lotes de 10*/
-    lookupBulk(names: string[]): Promise<BulkLookupResult[]>;
+    lookupBulk(names: string[], onProgress?: BulkProgressCallback): Promise<BulkLookupResult[]>;
 
-    /**Lanca TokenInvalidError (401) / AccountSuspendedError (403). */
-    checkAvailability(name: string, token: string): Promise<NameAvailabilityStatus>;
+    /**Lanca TokenInvalidError (401) / AccountSuspendedError (403). onPause avisa tanto de auto-throttle
+     * (janela do rate limiter cheia) quanto de 429 real da Mojang, antes de esperar/lancar. */
+    checkAvailability(name: string, token: string, onPause?: PauseCallback): Promise<NameAvailabilityStatus>;
 }
 
 function wait(ms: number): Promise<void> {
@@ -36,12 +49,16 @@ export function createMojangService(
     bulkRateLimiter: RateLimiter,
     verifyRateLimiter: RateLimiter,
 ): MojangService {
-    async function lookupBatch(names: string[], attempt = 1): Promise<BulkLookupResult[]> {
+    async function lookupBatch(names: string[], attempt = 1, onPause?: PauseCallback): Promise<BulkLookupResult[]> {
         if (names.length === 0) return [];
 
         try {
-            const response = await bulkRateLimiter.schedule(() =>
-                axios.post<MojangProfile[]>(endpoints.bulkServicesUrl, names),
+            // onPause aqui cobre DOIS casos: a janela do rate limiter esta
+            // cheia (auto-throttle normal, sem erro nenhum) ou um 429 real
+            // — pro usuario os dois sao a mesma coisa: "esta esperando".
+            const response = await bulkRateLimiter.schedule(
+                () => axios.post<MojangProfile[]>(endpoints.bulkServicesUrl, names),
+                onPause,
             );
 
             const taken = new Set(response.data.map((profile) => profile.name.toLowerCase()));
@@ -53,23 +70,29 @@ export function createMojangService(
             if (!isAxiosError(error) || !error.response) {
                 if (attempt >= MAX_BULK_RETRIES) throw error;
                 await wait(backoffMs(attempt));
-                return lookupBatch(names, attempt + 1);
+                return lookupBatch(names, attempt + 1, onPause);
             }
 
             const { status, headers } = error.response;
 
             if (status === 429) {
                 const retryAfter = Number(headers["retry-after"]);
-                bulkRateLimiter.pause((Number.isFinite(retryAfter) ? retryAfter : 30) * 1000);
+                // Sem header, escala 30s -> 60s -> 120s... em vez de pausar
+                // sempre 30s fixos — 429 repetido com pausa curta demais
+                // martela a API mais do que o esperado (mesmo risco que o
+                // Mcnames.py evita com o backoff exponencial dele).
+                const pauseMs = Number.isFinite(retryAfter) ? retryAfter * 1000 : backoffMs(attempt);
+                bulkRateLimiter.pause(pauseMs);
+                onPause?.(Date.now() + pauseMs);
                 if (attempt >= MAX_BULK_RETRIES) throw error;
-                return lookupBatch(names, attempt + 1);
+                return lookupBatch(names, attempt + 1, onPause);
             }
 
             if (status === 400 && names.length > 1) {
                 const mid = Math.floor(names.length / 2);
                 const [a, b] = await Promise.all([
-                    lookupBatch(names.slice(0, mid)),
-                    lookupBatch(names.slice(mid)),
+                    lookupBatch(names.slice(0, mid), 1, onPause),
+                    lookupBatch(names.slice(mid), 1, onPause),
                 ]);
                 return [...a, ...b];
             }
@@ -77,7 +100,7 @@ export function createMojangService(
             if (status >= 500 || status === 403) {
                 if (attempt >= MAX_BULK_RETRIES) throw error;
                 await wait(backoffMs(attempt));
-                return lookupBatch(names, attempt + 1);
+                return lookupBatch(names, attempt + 1, onPause);
             }
 
             throw error;
@@ -85,24 +108,46 @@ export function createMojangService(
     }
 
     return {
-        async lookupBulk(names) {
+        async lookupBulk(names, onProgress) {
             const batches: string[][] = [];
             for (let i = 0; i < names.length; i += BULK_BATCH_SIZE) {
                 batches.push(names.slice(i, i + BULK_BATCH_SIZE));
             }
 
-            const results = await Promise.all(batches.map((batch) => lookupBatch(batch)));
+            const total = names.length;
+            let checked = 0;
+            let free = 0;
+            let taken = 0;
+
+            const results = await Promise.all(
+                batches.map(async (batch) => {
+                    const batchResults = await lookupBatch(batch, 1, (pausedUntil) => {
+                        onProgress?.({ checked, total, free, taken, paused: true, pausedUntil });
+                    });
+
+                    checked += batchResults.length;
+                    for (const result of batchResults) {
+                        if (result.status === "free") free++;
+                        else taken++;
+                    }
+                    onProgress?.({ checked, total, free, taken, paused: false });
+
+                    return batchResults;
+                }),
+            );
             return results.flat();
         },
 
-        async checkAvailability(name, token) {
+        async checkAvailability(name, token, onPause) {
             const url = endpoints.availableUrl.replace("{name}", encodeURIComponent(name));
 
             try {
-                const response = await verifyRateLimiter.schedule(() =>
-                    axios.get<{ status: NameAvailabilityStatus }>(url, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }),
+                const response = await verifyRateLimiter.schedule(
+                    () =>
+                        axios.get<{ status: NameAvailabilityStatus }>(url, {
+                            headers: { Authorization: `Bearer ${token}` },
+                        }),
+                    onPause,
                 );
                 return response.data.status;
             } catch (error) {
@@ -114,7 +159,9 @@ export function createMojangService(
                 if (status === 403) throw new AccountSuspendedError("Conta possivelmente suspensa (403).");
                 if (status === 429) {
                     const retryAfter = Number(headers["retry-after"]);
-                    verifyRateLimiter.pause((Number.isFinite(retryAfter) ? retryAfter : 300) * 1000);
+                    const pauseMs = (Number.isFinite(retryAfter) ? retryAfter : 300) * 1000;
+                    verifyRateLimiter.pause(pauseMs);
+                    onPause?.(Date.now() + pauseMs);
                 }
                 throw error;
             }
