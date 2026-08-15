@@ -66,7 +66,7 @@ function SourceCard({
   children?: ReactNode
 }) {
   return (
-    <div className=" p-3">
+    <div className="py-3">
       <div className="flex items-center justify-between">
         <FieldLabel icon={icon} tip={tip}>
           {label}
@@ -255,7 +255,7 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
   }, [lengthMode, length, lengthMin, lengthMax, wordEn, wordPt, previewResult, badwordsMode, clean, pronounceable])
 
   return (
-    <aside className="w-72 shrink-0 overflow-y-auto border-r border-white/50 px-6 py-6">
+    <aside className="w-72 shrink-0 overflow-y-auto px-6 py-6">
       <Heading as="h2" font="heading" size="lg" weight="medium" animate={false} className="text-white">
         Search
       </Heading>
@@ -315,7 +315,7 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
             </span>
           }
         >
-          <div className="flex flex-col gap-3 ">
+          <div className="flex flex-col divide-y divide-white/10">
             <SourceCard
               icon={<Sparkles size={13} />}
               label="Markov"
@@ -353,7 +353,7 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
               <NumberInput label="Max variants per word" value={leetMax} onChange={setLeetMax} min={1} max={20} />
             </SourceCard>
 
-            <div className="border border-white/50 p-3">
+            <div className="py-3">
               <FieldLabel
                 icon={<LayoutGrid size={13} />}
                 tip="Fixed shape template: c=consonant, v=vowel, l=letter, d=digit, x=any. One name per matching combination. Comma-separate multiple patterns."
@@ -389,24 +389,26 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
             </span>
           }
         >
-          <div className="flex flex-col gap-4">
-            <Select
-              label="Bad words filter"
-              options={[
-                { value: 'smart', label: 'Smart (recommended)' },
-                { value: 'strict', label: 'Strict' },
-                { value: 'off', label: 'Off' },
-              ]}
-              value={badwordsMode}
-              onValueChange={(v: string) => setBadwordsMode(v as 'smart' | 'strict' | 'off')}
-            />
+          <div className="flex flex-col divide-y divide-white/10">
+            <div className="pb-4">
+              <Select
+                label="Bad words filter"
+                options={[
+                  { value: 'smart', label: 'Smart (recommended)' },
+                  { value: 'strict', label: 'Strict' },
+                  { value: 'off', label: 'Off' },
+                ]}
+                value={badwordsMode}
+                onValueChange={(v: string) => setBadwordsMode(v as 'smart' | 'strict' | 'off')}
+              />
+            </div>
 
-            <div className="flex items-center justify-between  p-3">
+            <div className="flex items-center justify-between py-3">
               <FieldLabel tip="Only letters, no digits or underscore.">Clean names only</FieldLabel>
               <Switch checked={clean} onCheckedChange={setClean} />
             </div>
 
-            <div className="flex items-center justify-between  p-3">
+            <div className="flex items-center justify-between py-3">
               <FieldLabel tip="Discard names that don't sound pronounceable in English, regardless of source.">
                 Pronounceable only
               </FieldLabel>

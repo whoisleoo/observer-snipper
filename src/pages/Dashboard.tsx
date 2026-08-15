@@ -19,10 +19,20 @@ function Dashboard({ username, onLogout }: DashboardProps) {
   const busy = status === 'searching' || status === 'checking' || status === 'verifying'
   const [view, setView] = useState<'search' | 'skin'>('search')
   const [configOpen, setConfigOpen] = useState(true)
+  const [query, setQuery] = useState('')
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <TopBar username={username} onLogout={onLogout} onOpenSkinView={() => setView('skin')} />
+      <TopBar
+        username={username}
+        onLogout={onLogout}
+        onOpenSkinView={() => setView('skin')}
+        search={
+          view === 'search'
+            ? { query, onQueryChange: setQuery, candidateCount: candidates.length }
+            : undefined
+        }
+      />
 
       {view === 'skin' ? (
         <SkinView username={username} onBack={() => setView('search')} />
@@ -52,7 +62,13 @@ function Dashboard({ username, onLogout }: DashboardProps) {
             {configOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
           </button>
 
-          <ResultsPanel status={status} candidates={candidates} progress={progress} onVerify={() => runVerify()} />
+          <ResultsPanel
+            status={status}
+            candidates={candidates}
+            progress={progress}
+            onVerify={() => runVerify()}
+            query={query}
+          />
         </div>
       )}
     </div>

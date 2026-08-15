@@ -55,9 +55,10 @@ interface ResultsPanelProps {
   candidates: Candidate[]
   progress: SearchProgress | null
   onVerify: () => void
+  query?: string
 }
 
-function ResultsPanel({ status, candidates, progress, onVerify }: ResultsPanelProps) {
+function ResultsPanel({ status, candidates, progress, onVerify, query = '' }: ResultsPanelProps) {
   const busy = status === 'searching' || status === 'checking' || status === 'verifying'
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set())
@@ -113,17 +114,20 @@ function ResultsPanel({ status, candidates, progress, onVerify }: ResultsPanelPr
     return statuses
   }, [activeFilters])
 
+  const trimmedQuery = query.trim().toLowerCase()
+
   const filteredTableData = useMemo(
     () =>
       candidates
         .filter((c) => !allowedStatuses || allowedStatuses.has(candidateStatus(c)))
+        .filter((c) => !trimmedQuery || c.name.toLowerCase().includes(trimmedQuery))
         .map((c) => ({
           id: c.name,
           name: c.name,
           origin: c.origin,
           status: candidateStatus(c),
         })),
-    [candidates, allowedStatuses],
+    [candidates, allowedStatuses, trimmedQuery],
   )
 
   const sortedTableData = useMemo(() => {
@@ -199,11 +203,13 @@ function ResultsPanel({ status, candidates, progress, onVerify }: ResultsPanelPr
           ]}
           data={pageItems}
           loading={status === 'searching' && candidates.length === 0}
-          emptyTitle={activeFilters.size > 0 ? 'No matches for this filter' : 'No candidates yet'}
+          emptyTitle={activeFilters.size > 0 || trimmedQuery ? 'No matches' : 'No candidates yet'}
           emptyDescription={
-            activeFilters.size > 0
-              ? 'Try enabling another status above.'
-              : 'Configure a search on the left and hit Search to generate candidates.'
+            trimmedQuery
+              ? 'Try a different search term.'
+              : activeFilters.size > 0
+                ? 'Try enabling another status above.'
+                : 'Configure a search on the left and hit Search to generate candidates.'
           }
           sortKey={sortKey}
           sortDir={sortDir}
