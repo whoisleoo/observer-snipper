@@ -1,6 +1,6 @@
 import { useId, useEffect, useRef, useState, useCallback } from 'react'
 import * as SliderPrimitive from '@radix-ui/react-slider'
-import { motion, AnimatePresence, useAnimate } from 'motion/react'
+import { motion, AnimatePresence, useAnimate } from 'framer-motion'
 import { useCursorDispatch } from '../hooks/useCursor.js'
 
 const RANGE_COLORS = {
@@ -29,6 +29,7 @@ export default function Slider({
   className     = '',
   value,
   onValueChange,
+  minStepsBetweenThumbs = 0,
 }) {
   const id = useId()
   const [scope, animate] = useAnimate()
@@ -83,6 +84,7 @@ export default function Slider({
           value={value}
           onValueChange={onValueChange}
           disabled={disabled}
+          minStepsBetweenThumbs={minStepsBetweenThumbs}
           className="relative flex items-center w-full h-5 select-none touch-none"
           onPointerDown={() => {
             setVariant('hidden')

@@ -1,15 +1,16 @@
 import { downloadAndCache } from "./httpCache";
 import { collapseRepeats, stripAccents } from "./textUtils";
+import { loadWordSet, type WordlistLang } from "./wordlistService";
 
 export type BadwordsMode = "smart" | "strict" | "off";
-export type BadwordsLang = "en" | "pt";
+export type BadwordsLang = WordlistLang;
 
 const BADWORDS_URLS: Record<BadwordsLang, string> = {
     en: "https://raw.githubusercontent.com/LDNOOBWV2/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words_V2/main/data/en.txt",
     pt: "https://raw.githubusercontent.com/LDNOOBWV2/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words_V2/main/data/pt.txt",
 };
 
-// Fallback se não conseguir baixar dos repositorios
+
 const BUILTIN_BADWORDS = [
     "anal", "anus", "arse", "ass", "bitch", "boob", "butt", "clit", "cock",
     "crap", "cum", "cunt", "dick", "dildo", "fuck", "jizz", "nazi", "penis",
@@ -71,31 +72,31 @@ export interface BadwordsService {
     size(): number;
 }
 
-/**
- * modo:
- *   strict — qualquer termo como substring
- *   smart  — termos de 4+ como substring; termos de 3 so se forem o nome
- *            inteiro ou estiverem na borda de um nome curto (default)
- */
+function normalizeTerm(raw: string): string {
+    const stripped = stripAccents(raw.trim().toLowerCase());
+    return [...stripped].filter((c) => /[a-z0-9]/.test(c)).join("");
+}
+
+
 export function createBadwordsService(
     terms: Iterable<string>,
-    options: { mode?: BadwordsMode; allow?: Iterable<string> } = {},
+    options: { mode?: BadwordsMode; allow?: Iterable<string>; escalate?: Iterable<string> } = {},
 ): BadwordsService {
     const mode = options.mode ?? "smart";
     const allow = new Set([...(options.allow ?? [])].map((a) => a.toLowerCase()));
+    const termsList = [...terms];
     const short = new Set<string>();
     const long = new Set<string>();
 
-    for (const raw of terms) {
-        const stripped = stripAccents(raw.trim().toLowerCase());
-        const t = [...stripped].filter((c) => /[a-z0-9]/.test(c)).join("");
+    for (const raw of options.escalate ?? termsList) {
+        const t = normalizeTerm(raw);
         if (t.length < 3) continue;
         (t.length === 3 ? short : long).add(t);
     }
 
     return {
         size() {
-            return short.size + long.size;
+            return termsList.length;
         },
 
         hit(name) {
@@ -125,6 +126,32 @@ export function createBadwordsService(
     };
 }
 
+function termsSafeAgainstDictionary(candidates: Map<string, string>, dictionary: Set<string>): string[] {
+    const byLength = new Map<number, Set<string>>();
+    for (const normalized of candidates.keys()) {
+        const set = byLength.get(normalized.length) ?? new Set<string>();
+        set.add(normalized);
+        byLength.set(normalized.length, set);
+    }
+
+    const collided = new Set<string>();
+    for (const word of dictionary) {
+        for (const [len, set] of byLength) {
+            if (len > word.length) continue;
+            for (let i = 0; i + len <= word.length; i++) {
+                const sub = word.slice(i, i + len);
+                if (set.has(sub)) collided.add(sub);
+            }
+        }
+    }
+
+    const safe: string[] = [];
+    for (const [normalized, raw] of candidates) {
+        if (!collided.has(normalized)) safe.push(raw);
+    }
+    return safe;
+}
+
 export async function loadBadwords(
     langs: BadwordsLang[],
     cacheDir: string,
@@ -135,13 +162,29 @@ export async function loadBadwords(
     }
 
     const terms = new Set(BUILTIN_BADWORDS);
+    const dictionary = new Set<string>();
+    const candidates = new Map<string, string>();
+
     for (const lang of langs) {
-        const raw = await downloadAndCache(BADWORDS_URLS[lang], cacheDir, `badwords_${lang}.txt`);
+        const [raw, words] = await Promise.all([
+            downloadAndCache(BADWORDS_URLS[lang], cacheDir, `badwords_${lang}.txt`),
+            loadWordSet(lang, cacheDir),
+        ]);
+
+        for (const w of words) dictionary.add(w);
+
         for (const line of raw.split("\n")) {
             const t = line.trim();
-            if (t) terms.add(t);
+            if (!t) continue;
+            terms.add(t);
+
+            const normalized = normalizeTerm(t);
+            if (normalized.length >= 4) candidates.set(normalized, t);
         }
     }
 
-    return createBadwordsService(terms, { mode, allow: BUILTIN_ALLOWLIST });
+    const escalate = new Set(BUILTIN_BADWORDS.map(normalizeTerm));
+    for (const raw of termsSafeAgainstDictionary(candidates, dictionary)) escalate.add(raw);
+
+    return createBadwordsService(terms, { mode, allow: BUILTIN_ALLOWLIST, escalate });
 }

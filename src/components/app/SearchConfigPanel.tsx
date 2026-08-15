@@ -22,6 +22,7 @@ import Tooltip from '../Tooltip'
 import Button from '../Button'
 import Modal from '../Modal'
 import NumberInput from '../NumberInput'
+import Slider from '../Slider'
 import Switch from '../Switch'
 import Input from '../Input'
 import Select from '../Select'
@@ -86,7 +87,10 @@ interface SearchConfigPanelProps {
 }
 
 function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onClearDatabase }: SearchConfigPanelProps) {
+  const [lengthMode, setLengthMode] = useState<'exact' | 'range'>('exact')
   const [length, setLength] = useState(4)
+  const [lengthMin, setLengthMin] = useState(4)
+  const [lengthMax, setLengthMax] = useState(8)
   const [wordEn, setWordEn] = useState(true)
   const [wordPt, setWordPt] = useState(false)
   const [useMarkov, setUseMarkov] = useState(true)
@@ -110,6 +114,30 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
   const [clearing, setClearing] = useState(false)
 
   const rateLimits = useRateLimits()
+
+  // Ao trocar de modo, carrega o valor atual do outro modo como ponto de
+  // partida — evita que o intervalo comece do zero (ou o exact "esqueca" o
+  // que o range tinha) sem nenhuma relacao com o que o usuario tinha antes.
+  // Min e max nunca podem nascer iguais: pra um so numero ja existe o modo
+  // Exact, entao o range parte de [length, length+1] (ou [15, 16] se length
+  // ja estiver no teto).
+  const handleLengthModeChange = (value: string) => {
+    const mode = value as 'exact' | 'range'
+    if (mode === 'range' && lengthMode === 'exact') {
+      const newMax = Math.min(16, length + 1)
+      const newMin = newMax === length ? length - 1 : length
+      setLengthMin(newMin)
+      setLengthMax(newMax)
+    } else if (mode === 'exact' && lengthMode === 'range') {
+      setLength(lengthMin)
+    }
+    setLengthMode(mode)
+  }
+
+  const handleLengthRangeChange = ([newMin, newMax]: number[]) => {
+    setLengthMin(newMin)
+    setLengthMax(newMax)
+  }
 
   // So pra warning ao vivo enquanto edita, ANTES de clicar Search — soma
   // so as fontes com contagem explicita, ja que dicionario/leet/pattern
@@ -138,7 +166,12 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
     const langs = [wordEn && 'en', wordPt && 'pt'].filter(Boolean) as Array<'en' | 'pt'>
     const effectiveLangs: Array<'en' | 'pt'> = langs.length ? langs : ['en']
 
-    const options: SearchOptions = { lengths: [length], clean, pronounceable }
+    const lengths =
+      lengthMode === 'range'
+        ? Array.from({ length: lengthMax - lengthMin + 1 }, (_, i) => lengthMin + i)
+        : [length]
+
+    const options: SearchOptions = { lengths, clean, pronounceable }
     if (langs.length) options.wordLangs = langs
     if (badwordsMode !== 'off') options.badwords = { langs: effectiveLangs, mode: badwordsMode }
     if (useLeet) options.leetMaxPerWord = leetMax
@@ -188,7 +221,9 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
   }
 
   const summaryRows = useMemo(() => {
-    const rows: Array<{ label: string; value: string }> = [{ label: 'Length', value: `${length} characters` }]
+    const lengthLabel =
+      lengthMode === 'range' ? `${lengthMin}-${lengthMax} characters` : `${length} characters`
+    const rows: Array<{ label: string; value: string }> = [{ label: 'Length', value: lengthLabel }]
 
     const langs = [wordEn && 'English', wordPt && 'Portuguese'].filter(Boolean) as string[]
     if (langs.length) rows.push({ label: 'Dictionaries', value: langs.join(', ') })
@@ -217,7 +252,7 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
     })
 
     return rows
-  }, [length, wordEn, wordPt, previewResult, badwordsMode, clean, pronounceable])
+  }, [lengthMode, length, lengthMin, lengthMax, wordEn, wordPt, previewResult, badwordsMode, clean, pronounceable])
 
   return (
     <aside className="w-72 shrink-0 overflow-y-auto border-r border-white/50 px-6 py-6">
@@ -231,7 +266,32 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
           <FieldLabel icon={<Hash size={13} />}>Name length</FieldLabel>
-          <NumberInput value={length} onChange={setLength} min={3} max={16} />
+          <Select
+            options={[
+              { value: 'exact', label: 'Exact length' },
+              { value: 'range', label: 'Length range' },
+            ]}
+            value={lengthMode}
+            onValueChange={handleLengthModeChange}
+          />
+          {lengthMode === 'exact' ? (
+            <NumberInput value={length} onChange={setLength} min={3} max={16} className="mt-2" />
+          ) : (
+            <div className="mt-2">
+              <div className="flex items-center justify-between font-label text-xs text-white/60">
+                <span>{lengthMin}</span>
+                <span>{lengthMax}</span>
+              </div>
+              <Slider
+                min={3}
+                max={16}
+                step={1}
+                minStepsBetweenThumbs={1}
+                value={[lengthMin, lengthMax]}
+                onValueChange={handleLengthRangeChange}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">

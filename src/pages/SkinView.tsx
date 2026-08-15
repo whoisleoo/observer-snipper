@@ -87,7 +87,7 @@ function SkinView({ username, onBack }: SkinViewProps) {
     <div className="flex flex-1 overflow-hidden">
       <aside className="w-96 shrink-0 overflow-y-auto border-r border-white/50 px-6 py-6">
         <div className="mb-6 flex items-center gap-4">
-          <Button variant="ghost" size="sm" icon={<ArrowLeft size={14} />} onClick={onBack}>
+          <Button variant="outline" size="sm" icon={<ArrowLeft size={14} />} onClick={onBack}>
             Voltar
           </Button>
         </div>
@@ -166,7 +166,7 @@ function SkinView({ username, onBack }: SkinViewProps) {
           </div>
 
           <Button
-            variant="outline"
+            variant="primary"
             size="sm"
             icon={<RotateCcw size={14} />}
             onClick={() => viewerRef.current?.resetView()}
