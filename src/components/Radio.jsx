@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const RadioContext = createContext({ error: false, groupValue: '' })
 

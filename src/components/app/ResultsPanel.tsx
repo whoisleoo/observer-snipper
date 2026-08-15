@@ -144,8 +144,8 @@ function ResultsPanel({ status, candidates, progress, onVerify }: ResultsPanelPr
     <main className="flex flex-1 flex-col overflow-hidden">
       <div className="flex shrink-0 items-center gap-8 border-b border-white/50 px-6 py-4 ">
         <Stat  value={candidates.length} label="Total" size="sm" animate={false} />
-        <Stat value={freeCount} label="Free" size="sm" animate={false} />
-        <Stat value={availableCount} label="Available" size="sm" animate={false} />
+        <Stat value={freeCount} label="Free"  size="sm" animate={false} />
+        <Stat value={availableCount} label="Available"   size="sm" animate={false} />
 
         <div className="ml-auto flex items-center gap-2">
           <InfoTip text="Checks each free candidate against your Minecraft account. Limited to a small number of requests per few minutes — this step is slower on purpose." />

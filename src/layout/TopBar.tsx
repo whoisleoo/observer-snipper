@@ -1,13 +1,14 @@
-import { LogOut } from 'lucide-react'
+import { LogOut, Shirt } from 'lucide-react'
 import Text from '../components/Text'
 import ThemeToggle from '../components/ThemeToggle'
 
 interface TopBarProps {
   username: string
   onLogout: () => Promise<void>
+  onOpenSkinView: () => void
 }
 
-function TopBar({ username, onLogout }: TopBarProps) {
+function TopBar({ username, onLogout, onOpenSkinView }: TopBarProps) {
   return (
     <header className="flex shrink-0 items-center justify-between border-b border-white/50 px-6 py-3">
       <div className="flex items-center gap-3">
@@ -18,6 +19,15 @@ function TopBar({ username, onLogout }: TopBarProps) {
       </div>
 
       <div className="flex items-center gap-4">
+        <button
+          type="button"
+          onClick={onOpenSkinView}
+          aria-label="Ver sua skin"
+          className="flex h-8 w-8 items-center justify-center text-white/50 transition-colors duration-150 hover:bg-white/15 hover:text-white"
+        >
+          <Shirt size={16} />
+        </button>
+
         <ThemeToggle />
 
         <button

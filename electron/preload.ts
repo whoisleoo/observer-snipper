@@ -25,6 +25,7 @@ contextBridge.exposeInMainWorld("electron", {
         loginWithMicrosoft: () => ipcRenderer.invoke("auth:login-microsoft") as Promise<LoginResult>,
         getSession: () => ipcRenderer.invoke("auth:get-session") as Promise<SessionInfo>,
         logout: () => ipcRenderer.invoke("auth:logout") as Promise<void>,
+        getSkinUrl: () => ipcRenderer.invoke("auth:get-skin-url") as Promise<string | null>,
     },
     nick: {
         search: (options: SearchOptions) => ipcRenderer.invoke("nick:search", options) as Promise<SearchResult>,

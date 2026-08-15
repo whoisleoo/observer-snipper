@@ -55,6 +55,16 @@ export function registerIpcHandlers() {
         tokenStore.forget();
     })
 
+    ipcMain.handle('auth:get-skin-url', async () => {
+        const session = tokenStore.load();
+        if (!session) {
+            throw new Error('Not signed in.');
+        }
+        const profile = await getMinecraftProfile(session.minecraftAccessToken);
+        const activeSkin = profile.skins.find((skin) => skin.state === 'ACTIVE') ?? profile.skins[0];
+        return activeSkin?.url ?? null;
+    })
+
     ipcMain.handle('nick:search', (_event, options: SearchOptions) => {
         return nickController.search(options);
     })

@@ -89,6 +89,7 @@ declare global {
         loginWithMicrosoft: () => Promise<LoginResult>
         getSession: () => Promise<SessionInfo>
         logout: () => Promise<void>
+        getSkinUrl: () => Promise<string | null>
       }
       nick: {
         search: (options: SearchOptions) => Promise<SearchResult>

@@ -65,7 +65,7 @@ function SourceCard({
   children?: ReactNode
 }) {
   return (
-    <div className="border border-white/60 p-3">
+    <div className=" p-3">
       <div className="flex items-center justify-between">
         <FieldLabel icon={icon} tip={tip}>
           {label}
@@ -341,12 +341,12 @@ function SearchConfigPanel({ busy, errorMessage, onSearch, candidateCount, onCle
               onValueChange={(v: string) => setBadwordsMode(v as 'smart' | 'strict' | 'off')}
             />
 
-            <div className="flex items-center justify-between border border-white/50 p-3">
+            <div className="flex items-center justify-between  p-3">
               <FieldLabel tip="Only letters, no digits or underscore.">Clean names only</FieldLabel>
               <Switch checked={clean} onCheckedChange={setClean} />
             </div>
 
-            <div className="flex items-center justify-between border border-white/50 p-3">
+            <div className="flex items-center justify-between  p-3">
               <FieldLabel tip="Discard names that don't sound pronounceable in English, regardless of source.">
                 Pronounceable only
               </FieldLabel>
